@@ -1,0 +1,56 @@
+
+CMSI 4072 Spring 2026
+Project Proposal Feedback
+Project: Sammy's Games
+=========================
+Proposal Document [2 points]:
+   Verbal Description:
+      Your Verbal Description is clear, readable, and coherent, and it does
+         cover many of the required core elements.
+      You state the application is a platform for original board and card
+         games.  This directly answers the "What is it?" portion.
+      You explain that users select a game and immediately play, the
+         interfaces are simple and intuitive, and some games allow solo,
+         multiplayer, or computer opponents.  This is appropriate
+         verbal-level requirements detail.
+      You give a clear identification of target audience, including casual
+         casual players looking for quick entertainment (inspired by
+         Wordle/NYT Games).
+      You further specify that only a browser on a standard computer is
+         required, and you give references to inspirations (cardgames.io,
+         GamePigeon).  Giving context helps clarify scope and expectations.
+
+
+   Justification:
+      Your justification includes several strong elements
+      You demonstrates connection to past coursework and you link your
+         project to game design, graphics, and AI courses.
+      You show motivation and personal interest when you explain that you
+         enjoy creating and playing games and had the idea during a previous
+         class.
+      You also address feasibility and scope flexibility, since you explain
+         that if it becomes too difficult, you can focus on one game; but if
+         manageable, more games can be added.
+      You also identify available tools (GitHub Pages, etc.) which shows
+         foresight regarding development needs.
+
+
+Proposal Presentation [Slides and video] [3 points]:
+   Slides:
+      Your slides are pretty minimal, with only the title slide including
+      any graphics.  However, you do state the important things that are
+      required for the presentation.  For the video, though, try to use
+      your imagination and do something FUN!  You can be professional in
+      a fun way by maybe dressing up shart and pretending to do an actual
+      proposal to a board of directors ~ maybe even get your friends to
+      sit round a table like a marketing team.  Or pretend you are doing
+      the presentation in your car, practicing on the way to give it.  I'm
+      sure you can come up with ideas of your own...  :)
+
+   Video:
+
+
+Summary:
+--------
+
+Nice job overall!  Keep up the good work.  Will update after video is posted.
