@@ -1,29 +1,18 @@
-<!--
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sammy's Games</title>
+  <title>Sammy's Games</title>
 </head>
 <body>
-    <h1>Sammy's Games</h1>
-    <p>Welcome.</p>
+
+  <h1>Sammy's Games</h1>
+
+  <nav>
+    <a href="index.html">Home</a> |
+    <a href="rps.html">RPS</a> |
+  </nav>
+
+  <p>Welcome to Sammy's Games.</p>
+
 </body>
 </html>
--->
-<!DOCTYPE html>
-<button onclick="p('rock')">Rock</button>
-<button onclick="p('paper')">Paper</button>
-<button onclick="p('scissors')">Scissors</button>
-<p id="r"></p>
-
-<script>
-function p(c){
-  let a=['rock','paper','scissors'],
-      d=a[Math.floor(Math.random()*3)];
-  r.innerText = c==d ? 'Tie' :
-    (c=='rock'&&d=='scissors'||c=='paper'&&d=='rock'||c=='scissors'&&d=='paper')
-    ? 'Win' : 'Lose';
-}
-</script>
