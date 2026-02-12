@@ -4,3 +4,17 @@
     <a href="rps.html">RPS</a> |
     <a href="knockout.html">Knockout</a> |
 </nav>
+
+<div class="board" id="board"></div>
+
+<script>
+for(let i = 0; i < 16; i++){
+  let cell = document.createElement("div");
+  cell.className = "cell";
+  board.appendChild(cell);
+  cell.onclick = () => {
+  cell.textContent = "X";
+};
+
+}
+</script>
