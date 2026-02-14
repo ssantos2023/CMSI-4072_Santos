@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html>
 <title>Sammy's Games</title>
 <h1>Knockout</h1>
 <nav>
@@ -6,7 +7,6 @@
     <a href="rps.html">RPS</a> |
     <a href="knockout.html">Knockout</a> |
 </nav>
-<html>
 <head>
   <style>
     .board {
@@ -14,8 +14,8 @@
       grid-template-columns: repeat(4, 80px);
       grid-template-rows: repeat(4, 80px);
       gap: 5px;
-      width: max-content;
       margin: 50px auto;
+      width: max-content;
     }
 
     .cell {
@@ -24,27 +24,76 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 30px;
       cursor: pointer;
+    }
+
+    .selected {
+      background: yellow;
     }
   </style>
 </head>
 <body>
 
-    <div class="board" id="board"></div>
+<div class="board" id="board"></div>
 
-    <script>
-    for(let i = 0; i < 16; i++){
-      let cell = document.createElement("div");
-      cell.className = "cell";
-      board.appendChild(cell);
-      cell.onclick = () => {
-      cell.textContent = "X";
-      };
-    }
-    
-    </script>
-    
+<script>
+let boardState = Array(16).fill(null);
+let row1 = [0, 1, 2, 3]
+let row2 = [4, 5, 6, 7]
+let row3 = [8, 9, 10, 11]
+let row4 = [12, 13, 14, 15]
+let col1 = [0, 4, 8, 12]
+let col2 = [1, 5, 9, 13]
+let col3 = [2, 6, 10, 14]
+let col4 = [3, 7, 11, 15]
+let selectedIndex = null;
+
+// Put starting pieces
+boardState[0] = "X";
+boardState[1] = "X";
+boardState[2] = "X";
+boardState[3] = "X";
+boardState[12] = "O";
+boardState[13] = "O";
+boardState[14] = "O";
+boardState[15] = "O";
+
+for (let i = 0; i < 16; i++) {
+  let cell = document.createElement("div");
+  cell.className = "cell";
+  cell.dataset.index = i;
+  cell.textContent = boardState[i];
+
+  cell.onclick = () => handleClick(i);
+
+  board.appendChild(cell);
+}
+
+function handleClick(i) {
+  // If clicking on a piece → select it
+  if (boardState[i] && selectedIndex === null) {
+    selectedIndex = i;
+    updateBoard();
+    return;
+  }
+
+  // If a piece is selected and clicking empty cell → move it
+  if (selectedIndex !== null && !boardState[i]) {
+    boardState[i] = boardState[selectedIndex];
+    boardState[selectedIndex] = null;
+    selectedIndex = null;
+    updateBoard();
+  }
+}
+
+function updateBoard() {
+  document.querySelectorAll(".cell").forEach((cell, i) => {
+    cell.textContent = boardState[i];
+    cell.classList.toggle("selected", i === selectedIndex);
+  });
+}
+</script>
 
 </body>
 </html>
