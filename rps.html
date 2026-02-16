@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
-<title>Sammy's Games</title>
+<head>
+  <title>Sammy's Games</title>
+</head>
+<body>
 <h1>RPS</h1>
 
 <nav>
@@ -8,18 +11,42 @@
     <a href="rps.html">RPS</a> |
     <a href="knockout.html">Knockout</a> |
 </nav>
-<button onclick="p('rock')">Rock</button>
-<button onclick="p('paper')">Paper</button>
-<button onclick="p('scissors')">Scissors</button>
-<p id="r"></p>
+
+<button onclick="play('rock')">Rock</button>
+<button onclick="play('paper')">Paper</button>
+<button onclick="play('scissors')">Scissors</button>
+
+<p id="result"></p>
+<p id="score">Wins: 0 | Losses: 0 | Ties: 0</p>
 
 <script>
-function p(c){
-  let a=['rock','paper','scissors'],
-      d=a[Math.floor(Math.random()*3)];
-  r.innerText = c==d ? 'Tie' :
-    (c=='rock'&&d=='scissors'||c=='paper'&&d=='rock'||c=='scissors'&&d=='paper')
-    ? 'Win' : 'Lose';
+let wins = 0;
+let losses = 0;
+let ties = 0;
+
+function play(playerChoice){
+  const options = ['rock', 'paper', 'scissors'];
+  const computerChoice = options[Math.floor(Math.random() * 3)];
+  let outcome = '';
+
+  if(playerChoice === computerChoice){
+    outcome = 'Tie';
+    ties++;
+  } else if(
+    (playerChoice === 'rock' && computerChoice === 'scissors') ||
+    (playerChoice === 'paper' && computerChoice === 'rock') ||
+    (playerChoice === 'scissors' && computerChoice === 'paper')
+  ) {
+    outcome = 'Win';
+    wins++;
+  } else {
+    outcome = 'Lose';
+    losses++;
+  }
+
+  document.getElementById('result').innerText = `You chose ${playerChoice}, computer chose ${computerChoice}. ${outcome}!`;
+  document.getElementById('score').innerText = `Wins: ${wins} | Losses: ${losses} | Ties: ${ties}`;
 }
 </script>
+</body>
 </html>

@@ -14,9 +14,10 @@
       grid-template-columns: repeat(4, 80px);
       grid-template-rows: repeat(4, 80px);
       gap: 5px;
-      margin: 50px auto;
+      margin: 50px 0; /* vertical spacing only */
       width: max-content;
     }
+
 
     .cell {
       background: lightgray;
@@ -31,23 +32,52 @@
     .selected {
       background: yellow;
     }
+    .valid {
+      background: lightskyblue;
+    }
+    .wrapper {
+      display: flex;
+      justify-content: center;   /* centers horizontally */
+    }
+
+    .container {
+      display: flex;
+      gap: 10px;
+      align-items: center;   /* <-- This centers vertically */
+    }
+    #moveInfo {
+      width: 160px;   /* Adjust if needed */
+    }
+
   </style>
 </head>
 <body>
 
-<div class="board" id="board"></div>
-
+  <div class="wrapper">
+    <div class="container">
+  
+      <div id="rulesBox">
+        <h3>Rules</h3>
+        <p>Write rules here...</p>
+      </div>
+  
+      <div class="board" id="board"></div>
+  
+      <div id="moveInfo">
+        <p><strong>X Last Move:</strong> <span id="xMove">None</span></p>
+        <p><strong>O Last Move:</strong> <span id="oMove">None</span></p>
+      </div>
+  
+    </div>
+  </div>
+  
 <script>
 let boardState = Array(16).fill(null);
-let row1 = [0, 1, 2, 3]
-let row2 = [4, 5, 6, 7]
-let row3 = [8, 9, 10, 11]
-let row4 = [12, 13, 14, 15]
-let col1 = [0, 4, 8, 12]
-let col2 = [1, 5, 9, 13]
-let col3 = [2, 6, 10, 14]
-let col4 = [3, 7, 11, 15]
+
 let selectedIndex = null;
+let xturn = false;
+let lastMoveX = "None";
+let lastMoveO = "None";
 
 // Put starting pieces
 boardState[0] = "X";
@@ -64,35 +94,182 @@ for (let i = 0; i < 16; i++) {
   cell.className = "cell";
   cell.dataset.index = i;
   cell.textContent = boardState[i];
-
   cell.onclick = () => handleClick(i);
-
   board.appendChild(cell);
 }
 
 function handleClick(i) {
-  // If clicking on a piece → select it
-  if (boardState[i] && selectedIndex === null) {
+
+  // If clicking the already selected piece → deselect it
+  if (selectedIndex === i) {
+      selectedIndex = null;
+      updateBoard();
+      return;
+    }
+
+  // Attempt move or push
+  if (selectedIndex !== null && validMove(selectedIndex, i)) {
+    // Edit last move data
+    if (xturn) {
+      lastMoveX = moveDirection(selectedIndex, i)
+      document.getElementById("xMove").textContent = lastMoveX
+    } else {
+      lastMoveO = moveDirection(selectedIndex, i)
+      document.getElementById("oMove").textContent = lastMoveO
+    }
+
+    // If push move
+    if (boardState[i] !== null) {
+      // Get direction to define step
+      if (moveDirection(selectedIndex, i) === "up") {
+        step = -4
+        edges = [0, 1, 2, 3]
+      } else if (moveDirection(selectedIndex, i) === "down") {
+        step = 4
+        edges = [12, 13, 14, 15]
+      } else if (moveDirection(selectedIndex, i) === "left") {
+        step = -1
+        edges = [0, 4, 8, 12]
+      } else if (moveDirection(selectedIndex, i) === "right") {
+        step = 1
+        edges = [3, 7, 11, 15]
+      }
+      // Save the piece being pushed
+      pushedPiece = boardState[i]
+      pushedIndex = i
+      // Usual movement handling
+      boardState[i] = boardState[selectedIndex];
+      boardState[selectedIndex] = null;
+      selectedIndex = null;
+      xturn = !xturn;
+      updateBoard();
+      while (true) {
+        // If the piece that got pushed was on an edge, it dies and game ends
+        if (edges.includes(pushedIndex)) {
+          console.log("an " + pushedPiece + " has fallen. game over")
+          break
+        } else {
+          pushedIndex += step
+          if (boardState[pushedIndex] === null) {
+            // If pushed onto an empty space, update and end loop
+            boardState[pushedIndex] = pushedPiece
+            updateBoard();
+            break
+          } else {
+            // Move piece and repeat
+            temp = boardState[pushedIndex]
+            boardState[pushedIndex] = pushedPiece
+            pushedPiece = temp
+            updateBoard()
+          }
+        }
+      }
+    } else {
+    // push OR move
+    
+    boardState[i] = boardState[selectedIndex];
+    boardState[selectedIndex] = null;
+
+    selectedIndex = null;
+    xturn = !xturn;
+    
+    updateBoard();
+    return
+    }
+  }
+  // Select piece
+  if (boardState[i] === "X" && xturn) {
+    selectedIndex = i;
+    updateBoard();
+    return;
+  } else if (boardState[i] === "O" && !xturn) {
     selectedIndex = i;
     updateBoard();
     return;
   }
-
-  // If a piece is selected and clicking empty cell → move it
-  if (selectedIndex !== null && !boardState[i]) {
-    boardState[i] = boardState[selectedIndex];
-    boardState[selectedIndex] = null;
-    selectedIndex = null;
-    updateBoard();
+}
+// Checks if a move from start to end is valid, returns true or false
+function validMove(start, end) {
+  // Gets the row and column of the start and end square
+  let startRow = Math.floor(start / 4);
+  let endRow = Math.floor(end / 4);
+  let startCol = start % 4;
+  let endCol = end % 4;
+  // If not in the same row and not in the same column, return false
+  if (startRow !== endRow && startCol !== endCol) {
+    return false;
+  }
+  // If in same row
+  if (startRow === endRow) {
+    // True if adjacent (push move)
+    if (start - end === 1 || start - end === -1) {
+      return true
+    }
+    // False if any squares between are occupied
+    let step = end > start ? 1 : -1;
+    for (let i = start + step; i !== end; i += step) {
+      if (boardState[i] !== null) {
+        return false
+      }
+    }
+  }
+  // If in same column
+  if (startCol === endCol) {
+    // True if adjacent (push move)
+    if (start - end === 4 || start - end === -4) {
+      return true
+    }
+    // False if any squares between are occupied
+    let step = end > start ? 4 : -4;
+    for (let i = start + step; i !== end; i += step) {
+      if (boardState[i] !== null) {
+        return false
+      }
+    }
+  }
+  // Otherwise, true if end square is empty
+  if (boardState[end] === null) {
+    return true
+  }
+}
+function moveDirection(start, end) {
+  let startRow = Math.floor(start / 4);
+  let endRow = Math.floor(end / 4);
+  let startCol = start % 4;
+  let endCol = end % 4;
+  if (startRow === endRow) {
+    if (startCol > endCol) {
+      return "left"
+    }
+    return "right"
+  }
+  if (startCol === endCol) {
+    if (startRow > endRow) {
+      return "up"
+    }
+    return "down"
   }
 }
 
 function updateBoard() {
   document.querySelectorAll(".cell").forEach((cell, i) => {
     cell.textContent = boardState[i];
+
+    // If there is a selected tile (yellow), make the empty spaces in same row/col valid (blue)
+    if (selectedIndex !== null) {
+      if (validMove(selectedIndex, i)) {
+        cell.classList.add("valid");
+      } else {
+        cell.classList.remove("valid");
+      }
+    } else {
+      cell.classList.remove("valid");
+    }
     cell.classList.toggle("selected", i === selectedIndex);
   });
 }
+
+
 </script>
 
 </body>
