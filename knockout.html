@@ -201,9 +201,12 @@ function validMove(start, end) {
   }
   // If in same row
   if (startRow === endRow) {
-    // True if adjacent (push move)
+    // True if adjacent and not repeating (push move)
     if (start - end === 1 || start - end === -1) {
-      return true
+      if (xturn && moveDirection(start, end) !== lastMoveX) {
+        return true }
+      if (!xturn && moveDirection(start, end) !== lastMoveO) {
+        return true }
     }
     // False if any squares between are occupied
     let step = end > start ? 1 : -1;
@@ -215,9 +218,12 @@ function validMove(start, end) {
   }
   // If in same column
   if (startCol === endCol) {
-    // True if adjacent (push move)
+    // True if adjacent and not repeating (push move)
     if (start - end === 4 || start - end === -4) {
-      return true
+      if (xturn && moveDirection(start, end) !== lastMoveX) {
+        return true }
+      if (!xturn && moveDirection(start, end) !== lastMoveO) {
+        return true }    
     }
     // False if any squares between are occupied
     let step = end > start ? 4 : -4;
