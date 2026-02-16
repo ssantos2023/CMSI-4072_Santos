@@ -9,12 +9,15 @@
 </nav>
 <head>
   <style>
+    .page {
+      display: flex;
+    }
     .board {
       display: grid;
       grid-template-columns: repeat(4, 80px);
       grid-template-rows: repeat(4, 80px);
       gap: 5px;
-      margin: 50px 0; /* vertical spacing only */
+      margin: 50px 0;
       width: max-content;
     }
 
@@ -45,6 +48,17 @@
       gap: 10px;
       align-items: center;   /* <-- This centers vertically */
     }
+    #rulesBox {
+      width: 400px;
+      padding: 20px;
+    }
+    .gameArea {
+      flex: 1;                 /* take remaining space */
+      display: flex;
+      justify-content: center; /* center board + move info */
+      gap: 20px;
+      align-items: center;
+    }
     #moveInfo {
       width: 160px;   /* Adjust if needed */
     }
@@ -53,23 +67,28 @@
 </head>
 <body>
 
-  <div class="wrapper">
-    <div class="container">
-  
-      <div id="rulesBox">
-        <h3>Rules</h3>
-        <p>Write rules here...</p>
+  <div class="page">
+
+    <div id="rulesBox">
+      <h3>Rules</h3>
+        <p>Knockout is a 2-player abstract strategy game with unique movement mechanics.</p>
+        <p>The goal is to win by knocking one of the opponent’s pieces off the board.</p>
+        <p>On your turn, you must make either a normal move or a push move.</p>
+        <p>Normal move: Move one of your pieces to an empty space any amount of empty spaces away in an orthogonal direction.</p>
+        <p>Push move: Move one of your pieces one space in an orthogonal direction. If this puts it on the same space as another piece, that piece is then pushed one space in the same direction. A pushed piece can in turn push another piece, and so on. Both players’ pieces can be pushed by either player.</p>
+        <p>Your last move is noted on the right. You may not make a push move in the same direction as your last move.</p>
       </div>
   
-      <div class="board" id="board"></div>
-  
-      <div id="moveInfo">
-        <p><strong>X Last Move:</strong> <span id="xMove">None</span></p>
-        <p><strong>O Last Move:</strong> <span id="oMove">None</span></p>
+      <div class="gameArea">
+        <div class="board" id="board"></div>
+    
+        <div id="moveInfo">
+          <p><strong>X Last Move:</strong> <span id="xMove">None</span></p>
+          <p><strong>O Last Move:</strong> <span id="oMove">None</span></p>
+        </div>
       </div>
-  
+    
     </div>
-  </div>
   
 <script>
 let boardState = Array(16).fill(null);
