@@ -62,6 +62,20 @@
     #moveInfo {
       width: 160px;   /* Adjust if needed */
     }
+    #announcement {
+      position: absolute;
+      top: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: crimson;
+      color: white;
+      padding: 15px 30px;
+      font-size: 22px;
+      font-weight: bold;
+      border-radius: 8px;
+      display: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
 
   </style>
 </head>
@@ -78,8 +92,9 @@
         <p>Push move: Move one of your pieces one space in an orthogonal direction. If this puts it on the same space as another piece, that piece is then pushed one space in the same direction. A pushed piece can in turn push another piece, and so on. Both players’ pieces can be pushed by either player.</p>
         <p>Your last move is noted on the right. You may not make a push move in the same direction as your last move.</p>
       </div>
-  
+      
       <div class="gameArea">
+        <div id="announcement"></div>
         <div class="board" id="board"></div>
     
         <div id="moveInfo">
@@ -140,16 +155,16 @@ function handleClick(i) {
     // If push move
     if (boardState[i] !== null) {
       // Get direction to define step
-      if (moveDirection(selectedIndex, i) === "up") {
+      if (moveDirection(selectedIndex, i) === "↑ Up") {
         step = -4
         edges = [0, 1, 2, 3]
-      } else if (moveDirection(selectedIndex, i) === "down") {
+      } else if (moveDirection(selectedIndex, i) === "↓ Down") {
         step = 4
         edges = [12, 13, 14, 15]
-      } else if (moveDirection(selectedIndex, i) === "left") {
+      } else if (moveDirection(selectedIndex, i) === "← Left") {
         step = -1
         edges = [0, 4, 8, 12]
-      } else if (moveDirection(selectedIndex, i) === "right") {
+      } else if (moveDirection(selectedIndex, i) === "→ Right") {
         step = 1
         edges = [3, 7, 11, 15]
       }
@@ -165,8 +180,8 @@ function handleClick(i) {
       while (true) {
         // If the piece that got pushed was on an edge, it dies and game ends
         if (edges.includes(pushedIndex)) {
-          console.log("an " + pushedPiece + " has fallen. game over")
-          break
+          announce(pushedPiece + " was pushed off! Game Over!");
+          break;
         } else {
           pushedIndex += step
           if (boardState[pushedIndex] === null) {
@@ -206,6 +221,11 @@ function handleClick(i) {
     updateBoard();
     return;
   }
+}
+function announce(message) {
+  const box = document.getElementById("announcement");
+  box.textContent = message;
+  box.style.display = "block";
 }
 // Checks if a move from start to end is valid, returns true or false
 function validMove(start, end) {
@@ -264,15 +284,15 @@ function moveDirection(start, end) {
   let endCol = end % 4;
   if (startRow === endRow) {
     if (startCol > endCol) {
-      return "left"
+      return "← Left"
     }
-    return "right"
+    return "→ Right"
   }
   if (startCol === endCol) {
     if (startRow > endRow) {
-      return "up"
+      return "↑ Up"
     }
-    return "down"
+    return "↓ Down"
   }
 }
 
