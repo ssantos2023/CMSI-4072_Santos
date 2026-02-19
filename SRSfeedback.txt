@@ -1,0 +1,78 @@
+
+Documentation Feedback ~ Deliverable #2
+Software Requirements Specification
+Initial Development Schedule
+CMSI 4072 Spring 2026
+=======================================
+
+COMPONENT BREAKDOWN:
+   Strengths
+      Components are clearly identified.
+      Their communication paths are described.
+   Suggestions
+      No detailed breakdown of internal structures within each component.
+      No data descriptions, interfaces, or constraints for each module.
+      No explicit decomposition hierarchy beyond top-level blocks.
+      Add a hierarchical component tree showing submodules.
+      Provide interface definitions and data handled by each component.
+      Describe responsibilities and boundaries of each subsystem in more
+         detail.
+
+FUNCTIONAL REQUIREMENTS:
+   Strengths
+      Requirements are observable and testable.
+      Good coverage of UI, gameplay flow, rule enforcement, and modes.
+      Turn-taking, invalid action handling, and terminal states are
+         addressed.
+   Suggestions
+      Some requirements lack edge-case expectations (e.g., what happens
+         if rule files fail to load).
+      No specification for error messaging, accessibility, or save data.
+      Functional dependencies between modules are implied but not stated.
+      Some requirements assume synchronous gameplay but do not state
+         constraints explicitly.
+
+PERFORMANCE REQUIREMENTS:
+   Strengths
+      Requirements include measurable thresholds.
+      Covers responsiveness and stability.
+   Suggestions
+      Only minimal performance categories are covered.
+      No requirements for memory usage, CPU load, or handling large game
+         states.
+      No network performance considerations beyond initial load.
+      No performance constraints for AI decision-making.
+
+ENVIRONMENT REQUIREMENTS:
+   Strengths
+      Clear development stack (HTML, CSS, JS, Git).
+      Execution environment defined for hardware and browser types.
+      Requirements for a modern browser and no installation are stated.
+   Suggestions
+      No OS compatibility notes beyond browser support.
+      No specification of required browser APIs (e.g., local storage).
+      No mention of mobile support or explicitly non-supported platforms.
+
+OVERALL ASSESSMENT:
+   Category                          Points
+   Component Breakdown               0.8/1
+   Functional Requirements           3.6/4
+   Performance Requirements          2.0/2
+   Environment Requirements          1.0/1
+                                     =====
+   Subtotal                          7.4/8
+   Preliminary Schedule              2.0/2
+   ------------------------------------------------------
+   Total Percentage:   9.4/10 = 94% which is an A
+
+You've met most of the desired measurements for this deliverable.  Your SRS
+is very well done but could benefit from at least incorporating a few of
+the suggestions to make it even more complete, such as adding error-handling
+behavior and fallback rules; providing accessibility requirements, if any;
+adding functional constraints between modules (e.g., AI depends on game
+state availability); and clarifying expected behavior for unusual or invalid
+UI sequences.
+
+Nice work on this deliverable ~ keep up the good work!
+
+
