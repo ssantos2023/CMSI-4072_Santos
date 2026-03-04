@@ -1,15 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Sammy's Games</title>
+  <title>Sammy's Games - Six Hands</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
+      margin: 0;
+      padding: 0;
     }
 
     nav {
-      margin-bottom: 20px;
+      margin: 15px;
+    }
+
+    .layout {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      padding: 20px;
+    }
+
+    .rules-panel {
+      width: 250px;
+      text-align: left;
+    }
+
+    .groups-panel {
+      width: 250px;
+      text-align: left;
+    }
+
+    .color-picker {
+      margin-bottom: 15px;
+    }
+
+    .color-button {
+      width: 30px;
+      height: 30px;
+      border: 2px solid black;
+      display: inline-block;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    .selected-color {
+      border: 4px solid black;
+    }
+
+    .center-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .grid {
@@ -28,6 +70,22 @@
       justify-content: center;
       font-size: 20px;
       background-color: white;
+      cursor: pointer;
+      transition: filter 0.2s;
+    }
+
+    .darkened {
+      filter: brightness(60%);
+    }
+
+    .red { color: red; }
+    .blue { color: blue; }
+    .green { color: green; }
+
+    .result {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 20px;
     }
   </style>
 </head>
@@ -36,18 +94,82 @@
 <h1>Six Hands</h1>
 
 <nav>
-    <a href="index.html">Home</a> |
-    <a href="rps.html">RPS</a> |
-    <a href="knockout.html">Knockout</a> |
-    <a href="knockout_bot.html">Knockout Bot</a> |
-    <a href="six_hands.html">Six Hands</a>
+  <a href="index.html">Home</a> |
+  <a href="rps.html">RPS</a> |
+  <a href="knockout.html">Knockout</a> |
+  <a href="knockout_bot.html">Knockout Bot</a> |
+  <a href="six_hands.html">Six Hands</a>
 </nav>
 
-<div class="grid" id="cardGrid"></div>
+<div class="layout">
+
+  <div class="rules-panel">
+    <h3>Rules</h3>
+    <p>
+      In Six Hands, form the grid of 30 cards into 6 five-card poker hands such that your lowest hand is as strong as possible. Compare with friends to see who can solve for the best low hand.
+    </p>
+    <p>
+      First, use the 5 non-black colors to highlight 6 groups of cards each. These groups must be fully orthogonally connected.
+    </p>
+    <p>
+      Then, using the black color, take one card from each group of 6 to form your sixth hand.
+    </p>
+    <p>
+      Currently, the VALID feature does not check for connectedness, only that you have 5 cards in each hand.
+    </p>
+    <p>
+      The cards are the same for everyone and change daily.
+    </p>
+  </div>
+
+  <div class="center-area">
+    <div class="color-picker" id="colorPicker"></div>
+    <div class="grid" id="cardGrid"></div>
+  </div>
+
+  <div class="groups-panel">
+    <h3>Highlighted Groups</h3>
+    <div id="groupList"></div>
+    <div id="validationResult" class="result">INVALID</div>
+  </div>
+
+</div>
 
 <script>
-  const suits = ["♠", "♥", "♦", "♣"];
+  const suits = ["s", "h", "d", "c"];
   const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+
+  const highlightColors = [
+    { code: "#FFD700", label: "Y" },
+    { code: "#90EE90", label: "G" },
+    { code: "#87CEFA", label: "B" },
+    { code: "#FFB6C1", label: "P1" },
+    { code: "#DDA0DD", label: "P2" }
+  ];
+
+  const blackMode = "#000000";
+  let currentHighlight = highlightColors[0].code;
+
+  function getDailySeed() {
+    const today = new Date();
+    const dateString = today.getFullYear() + "-" +
+                       (today.getMonth() + 1) + "-" +
+                       today.getDate();
+    let seed = 0;
+    for (let i = 0; i < dateString.length; i++) {
+      seed += dateString.charCodeAt(i);
+    }
+    return seed;
+  }
+
+  function mulberry32(a) {
+    return function() {
+      let t = a += 0x6D2B79F5;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+  }
 
   function createDeck() {
     const deck = [];
@@ -56,19 +178,117 @@
         deck.push(rank + suit);
       }
     }
+    deck.push("JOKER");
+    deck.push("JOKER");
     return deck;
   }
 
-  function shuffle(deck) {
+  function shuffle(deck, random) {
     for (let i = deck.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
+      const j = Math.floor(random() * (i + 1));
       [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+  }
+
+  function createColorPicker() {
+    const picker = document.getElementById("colorPicker");
+
+    highlightColors.forEach(colorObj => {
+      const button = document.createElement("div");
+      button.className = "color-button";
+      button.style.backgroundColor = colorObj.code;
+
+      button.addEventListener("click", () => {
+        currentHighlight = colorObj.code;
+        document.querySelectorAll(".color-button")
+          .forEach(b => b.classList.remove("selected-color"));
+        button.classList.add("selected-color");
+      });
+
+      picker.appendChild(button);
+    });
+
+    const blackButton = document.createElement("div");
+    blackButton.className = "color-button";
+    blackButton.style.backgroundColor = "black";
+
+    blackButton.addEventListener("click", () => {
+      currentHighlight = blackMode;
+      document.querySelectorAll(".color-button")
+        .forEach(b => b.classList.remove("selected-color"));
+      blackButton.classList.add("selected-color");
+    });
+
+    picker.appendChild(blackButton);
+  }
+
+  function updateGroupsAndValidation() {
+    const groupList = document.getElementById("groupList");
+    const resultDiv = document.getElementById("validationResult");
+    groupList.innerHTML = "";
+
+    const cards = Array.from(document.querySelectorAll(".card"));
+
+    const counts = {};
+    const darkCounts = {};
+    highlightColors.forEach(c => {
+      counts[c.code] = 0;
+      darkCounts[c.code] = 0;
+    });
+
+    const darkCards = [];
+
+    cards.forEach(card => {
+      if (card.dataset.highlight) {
+        counts[card.dataset.highlight]++;
+        if (card.classList.contains("darkened")) {
+          darkCounts[card.dataset.highlight]++;
+          darkCards.push(card.textContent);
+        }
+      }
+    });
+
+    // Show base groups (excluding darkened)
+    highlightColors.forEach(colorObj => {
+      const visibleCards = cards
+        .filter(card =>
+          card.dataset.highlight === colorObj.code &&
+          !card.classList.contains("darkened")
+        )
+        .map(card => card.textContent);
+
+      const line = document.createElement("div");
+      line.textContent = colorObj.label + ": " + visibleCards.join(", ");
+      groupList.appendChild(line);
+    });
+
+    // Show 6th hand (dark cards)
+    const darkLine = document.createElement("div");
+    darkLine.style.marginTop = "10px";
+    darkLine.textContent = "6: " + darkCards.join(", ");
+    groupList.appendChild(darkLine);
+
+    // VALIDATION RULES
+    const allColored = cards.every(card => card.dataset.highlight);
+
+    const sixPerColor = highlightColors.every(c => counts[c.code] === 6);
+    const oneDarkEach = highlightColors.every(c => darkCounts[c.code] === 1);
+    const fiveDarkTotal = darkCards.length === 5;
+
+    if (allColored && sixPerColor && oneDarkEach && fiveDarkTotal) {
+      resultDiv.textContent = "VALID";
+      resultDiv.style.color = "green";
+    } else {
+      resultDiv.textContent = "INVALID";
+      resultDiv.style.color = "red";
     }
   }
 
   function dealGrid() {
     const deck = createDeck();
-    shuffle(deck);
+    const seed = getDailySeed();
+    const random = mulberry32(seed);
+    shuffle(deck, random);
 
     const grid = document.getElementById("cardGrid");
     grid.innerHTML = "";
@@ -76,11 +296,38 @@
     for (let i = 0; i < 30; i++) {
       const cardDiv = document.createElement("div");
       cardDiv.className = "card";
+
+      if (deck[i].includes("h")) cardDiv.classList.add("red");
+      else if (deck[i].includes("d")) cardDiv.classList.add("blue");
+      else if (deck[i].includes("c")) cardDiv.classList.add("green");
+
       cardDiv.textContent = deck[i];
+
+      cardDiv.addEventListener("click", () => {
+        if (currentHighlight === blackMode) {
+          if (cardDiv.dataset.highlight) {
+            cardDiv.classList.toggle("darkened");
+          }
+        } else {
+          if (cardDiv.dataset.highlight === currentHighlight) {
+            cardDiv.style.backgroundColor = "white";
+            cardDiv.dataset.highlight = "";
+            cardDiv.classList.remove("darkened");
+          } else {
+            cardDiv.style.backgroundColor = currentHighlight;
+            cardDiv.dataset.highlight = currentHighlight;
+          }
+        }
+        updateGroupsAndValidation();
+      });
+
       grid.appendChild(cardDiv);
     }
+
+    updateGroupsAndValidation();
   }
 
+  createColorPicker();
   dealGrid();
 </script>
 
