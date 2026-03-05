@@ -68,7 +68,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
+      font-size: 24px;
       background-color: white;
       cursor: pointer;
       transition: filter 0.2s;
@@ -106,13 +106,13 @@
   <div class="rules-panel">
     <h3>Rules</h3>
     <p>
-      In Six Hands, form the grid of 30 cards into 6 five-card poker hands such that your lowest hand is as strong as possible. Compare with friends to see who can solve for the best low hand.
+      In Six Hands, form the grid of 30 cards into 6 five-card poker hands such that your lowest hand is as strong as possible. Compare with friends to see who can find the best low hand.
     </p>
     <p>
-      First, use the 5 non-black colors to highlight 6 groups of cards each. These groups must be fully orthogonally connected.
+      First, use the 5 non-black colors to highlight 5 groups of 6 cards each. These groups must be fully orthogonally connected.
     </p>
     <p>
-      Then, using the black color, take one card from each group of 6 to form your sixth hand.
+      Then, using the black color, take one card from each group to form your sixth hand.
     </p>
     <p>
       Currently, the VALID feature does not check for connectedness, only that you have 5 cards in each hand.
@@ -179,7 +179,7 @@
       }
     }
     deck.push("JOKER");
-    deck.push("JOKER");
+    deck.push("joker");
     return deck;
   }
 
