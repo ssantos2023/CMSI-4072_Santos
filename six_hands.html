@@ -157,7 +157,6 @@ The puzzle changes daily worldwide.
 
 <script>
 
-// 🔹 Compare full hand strength (with tie-breakers)
 function compareHands(a,b){
 for(let i=0;i<a.length;i++){
 if(a[i]!==b[i]) return a[i]-b[i];
@@ -231,7 +230,6 @@ function evaluateHand(cards){
 
 const deck=createDeck();
 
-// 🔹 Improved scoring
 function scoreHand(hand){
 
 const ranksArr=[];
@@ -318,7 +316,6 @@ return scoreHand(cards);
 let best=null;
 
 for(let candidate of deck){
-
 if(cards.includes(candidate)) continue;
 
 const test=[...cards];
@@ -471,6 +468,8 @@ groupList.appendChild(line);
 if(visibleCards.length===5){
 
 const result=evaluateHand(visibleCards);
+result.cards=visibleCards;
+
 handResults.push(result);
 
 const hand=document.createElement("div");
@@ -483,6 +482,28 @@ groupList.appendChild(hand);
 }
 
 });
+
+// ✅ HAND 6 (dark cards)
+const darkLine=document.createElement("div");
+darkLine.style.marginTop="10px";
+darkLine.textContent="6: "+darkCards.join(", ");
+groupList.appendChild(darkLine);
+
+if(darkCards.length===5){
+
+const result=evaluateHand(darkCards);
+result.cards=darkCards;
+
+handResults.push(result);
+
+const hand=document.createElement("div");
+hand.className="handname";
+hand.dataset.index=handResults.length-1;
+hand.textContent=result.name;
+
+groupList.appendChild(hand);
+
+}
 
 const allColored=cards.every(card=>card.dataset.highlight);
 const sixPerColor=highlightColors.every(c=>counts[c.code]===6);
@@ -511,14 +532,24 @@ lowestHand=h;
 hands.forEach(h=>h.style.fontWeight="normal");
 
 if(lowestHand){
+
+const lowestResult=handResults[lowestHand.dataset.index];
+
 lowestHand.style.fontWeight="bold";
 lowestHand.textContent+=" ⭐ Lowest";
-scoreDisplay.textContent="Score: "+lowestHand.textContent.replace(" ⭐ Lowest","");
+
+scoreDisplay.textContent=
+"Score: "+
+lowestResult.name+
+" ("+lowestResult.cards.join(", ")+")";
+
 }
 
 }else{
+
 resultDiv.textContent="INVALID";
 resultDiv.style.color="red";
+
 }
 
 }
