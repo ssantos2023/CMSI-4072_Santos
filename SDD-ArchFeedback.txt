@@ -7,30 +7,87 @@ CMSI 4072 Spring 2026 ~ Sammy's Games
 6.1 INTRODUCTION SECTION:
    System objectives section
       Strengths:
-
+         Objectives are specific, measurable, and aligned with the
+            application’s goals, such as enforcing rules, implementing an
+            AI, and delivering a working user interface.
+         The focus on one completed game as a first deliverable provides a
+            realistic and manageable scope.
       Suggestions:
+         The objectives could incorporate non-functional qualities like
+            maintainability, responsiveness, extensibility for future games,
+            or testability of AI logic.
+         The relationship between objectives and subsystems could be made more
+            explicit to support traceability later in the document.
+         Including priority levels or milestone sequencing would make
+            expectations clearer.
 
    Hardware, software, and human interfaces section
       Strengths:
-
+         Hardware needs are simple and clearly described, matching the
+            browser- based nature of the application.
+         Software interfaces are thoroughly listed, including the absence
+            of frameworks and the choice to run entirely client-side.
+         The human interface description is detailed, covering user flow,
+            interaction patterns, and visual feedback.
       Suggestions:
+         The hardware section could mention assumptions related to screen
+            size, resolution, or expected input latency.
+         The software section could include details about browser
+            compatibility, expected performance constraints, or plans for
+            mobile responsiveness.
+         The human interface discussion could include accessibility
+            considerations such as color contrast or support for
+            alternative input modes.
 
 
 6.2 ARCHITECTURAL DESIGN SECTION:
    Major softwre components section
       Strengths:
-
+         Each subsystem is described with clear responsibilities and
+            internal behaviors, especially the game logic, AI, and
+            rendering components.
+         The subsystems’ roles correspond well to established
+            architectural patterns and support clean separation of
+            concerns.
       Suggestions:
+         Components could explicitly describe their inputs, outputs, and
+            required data structures to improve clarity of interfaces
+            between subsystems.
+         The AI subsystem might benefit from notes on computational limits
+            or how deeper lookahead could be added.
+         A diagram or table showing dependencies among components would
+            improve architectural visibility.
 
    Major software interactions section
       Strengths:
-
+         The turn-execution sequence is clearly presented, showing how user
+            actions propagate through validation, state updates, rendering,
+            and AI decision making.
+         The description properly explains synchronous operation and lack of
+            external dependencies, which keeps interactions simple.
       Suggestions:
+         The section could describe error paths or invalid-move scenarios
+            in more detail, including how user feedback is surfaced.
+         More explicit discussion of how concurrency is avoided or managed
+            would clarify architectural safety guarantees.
+         Including timing considerations, such as the AI delay or rendering
+            update cadence, would add completeness.
 
    Architectural design diagrams section
       Strengths:
-
+         The listed diagrams cover the expected architectural perspectives,
+            including use case, component, and sequence diagrams.
+         The diagrams chosen align well with the described subsystems and
+            interaction flows.
       Suggestions:
+         There need to be some ACTUAL DIAGRAMS instead of simple text about
+            what the diagram will show.
+         The diagrams could be strengthened by including legends or notation
+            explanations to ensure consistent interpretation.
+         A higher-level architectural overview diagram would clarify where each
+            subsystem sits relative to others.
+         A data-flow or state-transition diagram for the game board could provide
+            additional insight into state evolution during gameplay.
 
 
 OVERALL ASSESSMENT:
@@ -51,3 +108,24 @@ The document was not submitted by the due date, no other arrangements were
 made in advance.  Document was not located in repository by March 5 which
 is over a week past the due date.  Zero points for this deliverable.
 
+==============================================================
+RE-EVALUATION ASSESSMENT 2026-03-21:
+   INTRODUCTION                        1.0
+   System objectives                   1.0
+   H/W, S/W, Human I/F                 1.0
+
+   ARCHITECTURAL DESIGN SECTION:
+   Major softwre components            1.0
+   Major software interactions         1.0
+   Architectural design diagrams       2.0
+                                     ======
+   Subtotal                            7.0
+   ------------------------------------------------------
+   Total Percentage:  7/10 = 70% which is a c on this deliverable.
+
+This SDD provides a well-structured and readable architectural overview of
+the gaming application. It thoroughly describes components, interactions,
+and interfaces, and offers enough detail to support implementation. The
+document would be even stronger with more explicit coverage of
+non-functional concerns, clearer interface contracts, expanded diagrams,
+and a slightly broader architectural context.
