@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>6x6 Rotate Grid - Daily Challenge</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      background: #111;
+      margin: 0;
+      color: white;
+      font-family: sans-serif;
+      padding: 20px;
+    }
+
+    #title {
+      font-size: 32px;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    #grid-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    #rules {
+      background-color: #222;
+      color: white;
+      padding: 20px;
+      width: 200px;
+      font-size: 16px;
+      border-radius: 10px;
+      position: absolute;
+      left: 20px;
+      top: 120px;
+      height: fit-content;
+      min-height: 200px;
+    }
+
+    #score {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    #score-breakdown {
+      font-size: 18px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(6, 60px);
+      grid-template-rows: repeat(6, 60px);
+      gap: 5px;
+      margin-top: 20px;
+    }
+
+    .cell {
+      width: 60px;
+      height: 60px;
+      border: 1px solid #444;
+      cursor: pointer;
+    }
+
+    .cell:hover {
+      opacity: 0.85;
+    }
+
+    .selected {
+      outline: 3px solid white;
+    }
+
+    #buttons {
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin-right: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      background-color: #333;
+      color: white;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      #grid-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      #rules {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="title">6x6 Color Rotation Game</div>
+
+  <div id="grid-container">
+    <!-- Grid and Score Display -->
+    <div>
+      <div id="score">Score: 0</div>
+      <div id="move-limit">Moves Left: 0</div> <!-- Display Move Limit -->
+      <div id="score-breakdown"></div>
+      <div id="grid"></div>
+    </div>
+  </div>
+
+  <!-- Rules Box -->
+  <div id="rules">
+    <h3>Rules</h3>
+    <ul>
+      <li>Select any tile to start.</li>
+      <li>Then select a diagonally adjacent tile.</li>
+      <li>These two tiles and the adjacent ones will rotate their colors clockwise.</li>
+      <li>Your score is based on the largest cluster of each color.</li>
+      <li>You have a limited number of moves each day (Random between 6-20).</li>
+    </ul>
+  </div>
+
+  <div id="buttons">
+    <button id="new-game-btn">New Game (Unlimited)</button>
+  </div>
+
+<script>
+  const grid = document.getElementById("grid");
+  const scoreDisplay = document.getElementById("score");
+  const scoreBreakdownDisplay = document.getElementById("score-breakdown");
+  const moveLimitDisplay = document.getElementById("move-limit"); // Display Move Limit
+
+  const size = 6;
+  const colors = ["red", "blue", "green", "yellow"];
+
+  let cells = [];
+  let selected = null;
+  let moveHistory = [];  // Stack to hold previous moves for undo functionality
+  let currentBoard = [];  // To track the current state of the board
+  let moveLimit = 0;  // Variable for the move limit
+  let moves = 0;  // Track moves made
+
+  // Get the current date (this will be used as a seed for daily mode)
+  const today = new Date();
+  const dateStr = today.toISOString().split('T')[0]; // e.g. "2026-04-21"
+  const seed = parseInt(dateStr.replace(/-/g, ''), 10); // YYYYMMDD as integer
+
+  // Seeded random function for daily mode
+  let currentSeed = seed;
+  function seededRandom() {
+    const x = Math.sin(currentSeed++) * 10000;
+    return x - Math.floor(x);
+  }
+
+  // Generate a new random board (used for both daily and unlimited mode)
+  function generateBoard(useSeed = true) {
+    let board = [];
+    let randFunc = useSeed ? seededRandom : Math.random;
+
+    for (let row = 0; row < size; row++) {
+      board[row] = [];
+      for (let col = 0; col < size; col++) {
+        const color = colors[Math.floor(randFunc() * colors.length)];
+        board[row][col] = color;
+      }
+    }
+    return board;
+  }
+
+  // Store board state (for undo)
+  function storeBoardState() {
+    const state = [];
+    for (let row = 0; row < size; row++) {
+      state.push([...currentBoard[row]]);  // Create a copy of the row
+    }
+    moveHistory.push(state);
+  }
+
+  // Generate the initial game state
+  function startGame(useDailySeed = true) {
+    currentBoard = generateBoard(useDailySeed);
+    storeBoardState();  // Store the initial state
+    moveLimit = Math.floor(seededRandom() * (20 - 6 + 1)) + 6;  // Randomize move limit for daily mode
+    moves = 0;  // Reset moves
+    updateGrid();
+    updateScore();
+    updateMoveLimit();
+  }
+
+  // Create grid cells
+  function updateGrid() {
+    grid.innerHTML = '';  // Clear previous grid
+    for (let row = 0; row < size; row++) {
+      cells[row] = [];
+      for (let col = 0; col < size; col++) {
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        const color = currentBoard[row][col];
+        cell.style.backgroundColor = color;
+
+        cell.addEventListener("click", () => handleClick(row, col));
+
+        grid.appendChild(cell);
+        cells[row][col] = cell;
+      }
+    }
+  }
+
+  // Handle cell click event
+  function handleClick(row, col) {
+    const clicked = cells[row][col];
+
+    if (moves >= moveLimit) {
+      alert("Move limit reached!");
+      return;
+    }
+
+    if (!selected) {
+      selected = { row, col };
+      clicked.classList.add("selected");
+      return;
+    }
+
+    const r1 = selected.row;
+    const c1 = selected.col;
+
+    if (Math.abs(r1 - row) === 1 && Math.abs(c1 - col) === 1) {
+      storeBoardState();  // Store the current board state before moving
+      rotateSquare(r1, c1, row, col);
+      updateScore();
+    }
+
+    cells[r1][c1].classList.remove("selected");
+    selected = null;
+    moves++;
+    updateMoveLimit();
+  }
+
+  function rotateSquare(r1, c1, r2, c2) {
+    const minRow = Math.min(r1, r2);
+    const maxRow = Math.max(r1, r2);
+    const minCol = Math.min(c1, c2);
+    const maxCol = Math.max(c1, c2);
+
+    const tl = cells[minRow][minCol];
+    const tr = cells[minRow][maxCol];
+    const br = cells[maxRow][maxCol];
+    const bl = cells[maxRow][minCol];
+
+    const temp = tl.style.backgroundColor;
+
+    tl.style.backgroundColor = bl.style.backgroundColor;
+    bl.style.backgroundColor = br.style.backgroundColor;
+    br.style.backgroundColor = tr.style.backgroundColor;
+    tr.style.backgroundColor = temp;
+
+    // Update current board state
+    currentBoard[minRow][minCol] = tl.style.backgroundColor;
+    currentBoard[minRow][maxCol] = tr.style.backgroundColor;
+    currentBoard[maxRow][maxCol] = br.style.backgroundColor;
+    currentBoard[maxRow][minCol] = bl.style.backgroundColor;
+  }
+
+  function updateScore() {
+    let totalScore = 0;
+    const breakdown = {};
+
+    for (const color of colors) {
+      const colorScore = largestCluster(color);
+      breakdown[color] = colorScore;
+      totalScore += colorScore;
+    }
+
+    scoreDisplay.textContent = `Total Score: ${totalScore}`;
+
+    // Update score breakdown display
+    let breakdownText = "";
+    for (const color in breakdown) {
+      breakdownText += `${color.charAt(0).toUpperCase() + color.slice(1)}: ${breakdown[color]}<br>`;
+    }
+    scoreBreakdownDisplay.innerHTML = breakdownText;
+  }
+
+  function updateMoveLimit() {
+    moveLimitDisplay.textContent = `Moves Left: ${moveLimit - moves}`;
+  }
+
+  function largestCluster(targetColor) {
+    const visited = Array.from({ length: size }, () => Array(size).fill(false));
+    let maxSize = 0;
+
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        if (!visited[r][c] && cells[r][c].style.backgroundColor === targetColor) {
+          const sizeCluster = floodFill(r, c, targetColor, visited);
+          maxSize = Math.max(maxSize, sizeCluster);
+        }
+      }
+    }
+
+    return maxSize;
+  }
+
+  function floodFill(r, c, color, visited) {
+    const stack = [[r, c]];
+    let count = 0;
+
+    while (stack.length > 0) {
+      const [row, col] = stack.pop();
+
+      if (
+        row < 0 || row >= size ||
+        col < 0 || col >= size ||
+        visited[row][col] ||
+        cells[row][col].style.backgroundColor !== color
+      ) continue;
+
+      visited[row][col] = true;
+      count++;
+
+      // 4-directional neighbors
+      stack.push([row + 1, col]);
+      stack.push([row - 1, col]);
+      stack.push([row, col + 1]);
+      stack.push([row, col - 1]);
+    }
+
+    return count;
+  }
+
+  // Add New Game (Unlimited) functionality
+  document.getElementById('new-game-btn').addEventListener('click', () => {
+    startGame(false);  // New game without using the daily seed
+  });
+
+  // Initialize the game (Daily Mode)
+  startGame(true);
+</script>
+
+</body>
+</html>
