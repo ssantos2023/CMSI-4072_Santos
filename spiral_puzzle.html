@@ -242,16 +242,20 @@
     const r1 = selected.row;
     const c1 = selected.col;
 
+    // Check if the move is valid (diagonal)
     if (Math.abs(r1 - row) === 1 && Math.abs(c1 - col) === 1) {
-      storeBoardState();  // Store the current board state before moving
+      storeBoardState();  
       rotateSquare(r1, c1, row, col);
       updateScore();
+      
+      // ONLY increment moves and update display if a valid move happened
+      moves++;
+      updateMoveLimit();
     }
 
+    // Always deselect the first tile, even if the second click was invalid
     cells[r1][c1].classList.remove("selected");
     selected = null;
-    moves++;
-    updateMoveLimit();
   }
 
   function rotateSquare(r1, c1, r2, c2) {
