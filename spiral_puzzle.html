@@ -2,20 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Color Spiral - Daily Challenge</title>
+  <title>Sammy's Games - Color Spiral</title>
   <style>
     body {
       display: flex;
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      height: 100vh;
+      min-height: 100vh;
       background: #111;
       margin: 0;
       color: white;
       font-family: sans-serif;
       padding: 20px;
     }
+
+    .topbar {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    nav a {
+      color: #aaa;
+      text-decoration: none;
+      margin: 0 5px;
+    }
+
+    nav a:hover { color: #fff; }
 
     #title {
       font-size: 32px;
@@ -27,41 +41,59 @@
     #grid-container {
       display: flex;
       justify-content: center;
-      align-items: center;
-      position: relative;
+      align-items: flex-start;
+      gap: 30px;
     }
 
     #rules {
       background-color: #222;
-      color: white;
       padding: 20px;
       width: 200px;
-      font-size: 16px;
+      font-size: 14px;
       border-radius: 10px;
-      position: absolute;
-      left: 20px;
-      top: 120px;
-      height: fit-content;
-      min-height: 200px;
     }
 
-    #score {
-      font-size: 24px;
+    #game-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #move-log-container {
+      background-color: #222;
+      padding: 15px;
+      width: 180px;
+      border-radius: 10px;
+      height: 450px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #move-log {
+      flex-grow: 1;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 14px;
+      border: 1px solid #444;
+      padding: 10px;
+      background: #000;
       margin-bottom: 10px;
     }
 
-    #score-breakdown {
-      font-size: 18px;
-      margin-bottom: 20px;
-      text-align: center;
-    }
+    #score { font-size: 24px; margin-bottom: 5px; }
+    #move-limit { font-size: 20px; color: #ffcc00; margin-bottom: 10px; }
+    #score-breakdown { font-size: 16px; margin-bottom: 20px; color: #aaa; }
 
+    /* Updated Grid to accommodate labels */
     #grid {
       display: grid;
-      grid-template-columns: repeat(6, 60px);
-      grid-template-rows: repeat(6, 60px);
+      /* 7 columns: 1 for numbers + 6 for tiles */
+      grid-template-columns: 30px repeat(6, 60px);
+      /* 7 rows: 1 for letters + 6 for tiles */
+      grid-template-rows: 30px repeat(6, 60px);
       gap: 5px;
-      margin-top: 20px;
+      align-items: center;
+      justify-items: center;
     }
 
     .cell {
@@ -69,24 +101,26 @@
       height: 60px;
       border: 1px solid #444;
       cursor: pointer;
+      transition: background-color 0.2s;
     }
 
-    .cell:hover {
-      opacity: 0.85;
+    .label {
+      font-weight: bold;
+      color: #888;
+      font-size: 18px;
     }
 
     .selected {
       outline: 3px solid white;
+      z-index: 10;
     }
 
-    #buttons {
-      margin-top: 20px;
-    }
+    #buttons { margin-top: 20px; }
 
     button {
-      padding: 10px 20px;
-      margin-right: 10px;
-      font-size: 16px;
+      padding: 10px 15px;
+      margin: 5px;
+      font-size: 14px;
       cursor: pointer;
       border: none;
       background-color: #333;
@@ -94,166 +128,178 @@
       border-radius: 5px;
     }
 
-    button:hover {
-      background-color: #555;
-    }
+    button:hover { background-color: #555; }
+    #undo-btn { background-color: #553333; }
+    #copy-log-btn { background-color: #334455; width: 100%; }
 
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      #grid-container {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      #rules {
-        width: 100%;
-        margin-bottom: 20px;
-      }
+    @media (max-width: 1000px) {
+      #grid-container { flex-direction: column; align-items: center; }
+      #move-log-container { width: 100%; height: 150px; }
     }
   </style>
 </head>
 <body>
 
-  <div id="title">Color Spiral - Daily Challenge</div>
+  <header class="topbar">
+    <div id="title">Color Spiral - Daily Challenge</div>
+    <nav>
+      <a href="index.html">Home</a> | <a href="rps.html">RPS</a> | <a href="knockout.html">Knockout</a> | <a href="knockout_bot.html">Knockout Bot</a> | <a href="five_hands.html">Five Hands</a> | <a href="six_hands.html">Six Hands</a> | <a href="step_count.html">Step Count</a> | <a href="spiral_puzzle.html">Color Spiral</a>
+    </nav>
+  </header>
 
   <div id="grid-container">
-    <!-- Grid and Score Display -->
-    <div>
-      <div id="score">Score: 0</div>
-      <div id="move-limit">Moves Left: 0</div> <!-- Display Move Limit -->
+    <div id="rules">
+      <h3>Rules</h3>
+      <ul>
+        <li>Select a tile, then select a <b>diagonally adjacent</b> tile.</li>
+        <li>The 2x2 area defined will rotate clockwise.</li>
+        <li>You score is the sum of the largest cluster of each color.</li>
+        <li>The <b>Move Log</b> uses the Top-Left coordinate of the rotation.</li>
+      </ul>
+    </div>
+
+    <div id="game-area">
+      <div id="score">Total Score: 0</div>
+      <div id="move-limit">Moves Left: 0</div>
       <div id="score-breakdown"></div>
       <div id="grid"></div>
+      
+      <div id="buttons">
+        <button id="undo-btn">Undo Move</button>
+        <button id="new-game-btn">New Game (Unlimited)</button>
+      </div>
     </div>
-  </div>
 
-  <!-- Rules Box -->
-  <div id="rules">
-    <h3>Rules</h3>
-    <ul>
-      <li>Select any tile to start.</li>
-      <li>Then select a diagonally adjacent tile.</li>
-      <li>These two tiles and the adjacent ones will rotate their colors clockwise.</li>
-      <li>Your score is based on the largest cluster of each color.</li>
-      <li>You have a limited number of moves each day (Random between 6-20).</li>
-    </ul>
-  </div>
-
-  <div id="buttons">
-    <button id="new-game-btn">New Game (Unlimited)</button>
+    <div id="move-log-container">
+      <h3>Move Log</h3>
+      <div>The top left coordinate of each spin is recorded.</div>
+      <div id="move-log"></div>
+      <button id="copy-log-btn">Copy Sequence</button>
+    </div>
   </div>
 
 <script>
   const grid = document.getElementById("grid");
   const scoreDisplay = document.getElementById("score");
   const scoreBreakdownDisplay = document.getElementById("score-breakdown");
-  const moveLimitDisplay = document.getElementById("move-limit"); // Display Move Limit
+  const moveLimitDisplay = document.getElementById("move-limit");
+  const moveLogDisplay = document.getElementById("move-log");
 
   const size = 6;
   const colors = ["red", "blue", "green", "yellow"];
+  const colLabels = ['A', 'B', 'C', 'D', 'E', 'F'];
 
   let cells = [];
   let selected = null;
-  let moveHistory = [];  // Stack to hold previous moves for undo functionality
-  let currentBoard = [];  // To track the current state of the board
-  let moveLimit = 0;  // Variable for the move limit
-  let moves = 0;  // Track moves made
+  let moveHistory = [];  
+  let moveSequence = []; 
+  let currentBoard = [];  
+  let moveLimit = 0;  
+  let moves = 0;  
 
-  // Get the current date (this will be used as a seed for daily mode)
   const today = new Date();
-  const dateStr = today.toISOString().split('T')[0]; // e.g. "2026-04-21"
-  const seed = parseInt(dateStr.replace(/-/g, ''), 10); // YYYYMMDD as integer
+  const dateStr = today.toISOString().split('T')[0]; 
+  const baseSeed = parseInt(dateStr.replace(/-/g, ''), 10);
+  let currentSeed = baseSeed;
 
-  // Seeded random function for daily mode
-  let currentSeed = seed;
   function seededRandom() {
     const x = Math.sin(currentSeed++) * 10000;
     return x - Math.floor(x);
   }
 
-  // Generate a new random board (used for both daily and unlimited mode)
-  function generateBoard(useSeed = true) {
+  function generateBoard() {
     let board = [];
-    let randFunc = useSeed ? seededRandom : Math.random;
-
     for (let row = 0; row < size; row++) {
       board[row] = [];
       for (let col = 0; col < size; col++) {
-        const color = colors[Math.floor(randFunc() * colors.length)];
+        const color = colors[Math.floor(seededRandom() * colors.length)];
         board[row][col] = color;
       }
     }
     return board;
   }
 
-  // Store board state (for undo)
   function storeBoardState() {
-    const state = [];
-    for (let row = 0; row < size; row++) {
-      state.push([...currentBoard[row]]);  // Create a copy of the row
-    }
+    const state = currentBoard.map(row => [...row]);
     moveHistory.push(state);
   }
 
-  // Generate the initial game state
-  function startGame(useDailySeed = true) {
-    currentBoard = generateBoard(useDailySeed);
-    storeBoardState();  // Store the initial state
-    moveLimit = Math.floor(seededRandom() * (20 - 6 + 1)) + 6;  // Randomize move limit for daily mode
-    moves = 0;  // Reset moves
+  function startGame(isInitialLoad = true) {
+    moveHistory = []; 
+    moveSequence = [];
+    moves = 0;
+    if (isInitialLoad) currentSeed = baseSeed;
+    currentBoard = generateBoard();
+    storeBoardState(); 
+    moveLimit = Math.floor(seededRandom() * 15) + 6; 
     updateGrid();
     updateScore();
     updateMoveLimit();
+    updateMoveLog();
   }
 
-  // Create grid cells
   function updateGrid() {
-    grid.innerHTML = '';  // Clear previous grid
+    grid.innerHTML = '';  
+    cells = [];
+
+    // 1. Add empty top-left corner
+    const corner = document.createElement("div");
+    grid.appendChild(corner);
+
+    // 2. Add Column Labels (A-F)
+    for (let i = 0; i < size; i++) {
+      const label = document.createElement("div");
+      label.classList.add("label");
+      label.textContent = colLabels[i];
+      grid.appendChild(label);
+    }
+
     for (let row = 0; row < size; row++) {
+      // 3. Add Row Label (1-6)
+      const label = document.createElement("div");
+      label.classList.add("label");
+      label.textContent = row + 1;
+      grid.appendChild(label);
+
       cells[row] = [];
       for (let col = 0; col < size; col++) {
         const cell = document.createElement("div");
         cell.classList.add("cell");
-        const color = currentBoard[row][col];
-        cell.style.backgroundColor = color;
-
+        cell.style.backgroundColor = currentBoard[row][col];
         cell.addEventListener("click", () => handleClick(row, col));
-
         grid.appendChild(cell);
         cells[row][col] = cell;
       }
     }
   }
 
-  // Handle cell click event
   function handleClick(row, col) {
-    const clicked = cells[row][col];
-
-    if (moves >= moveLimit) {
-      alert("Move limit reached!");
-      return;
-    }
+    if (moves >= moveLimit) return;
 
     if (!selected) {
       selected = { row, col };
-      clicked.classList.add("selected");
+      cells[row][col].classList.add("selected");
       return;
     }
 
     const r1 = selected.row;
     const c1 = selected.col;
 
-    // Check if the move is valid (diagonal)
     if (Math.abs(r1 - row) === 1 && Math.abs(c1 - col) === 1) {
-      storeBoardState();  
-      rotateSquare(r1, c1, row, col);
-      updateScore();
+      const topLeftRow = Math.min(r1, row);
+      const topLeftCol = Math.min(c1, col);
+      const moveLabel = `${colLabels[topLeftCol]}${topLeftRow + 1}`;
       
-      // ONLY increment moves and update display if a valid move happened
+      rotateSquare(r1, c1, row, col);
+      storeBoardState(); 
+      moveSequence.push(moveLabel);
+      
       moves++;
+      updateScore();
       updateMoveLimit();
+      updateMoveLog();
     }
 
-    // Always deselect the first tile, even if the second click was invalid
     cells[r1][c1].classList.remove("selected");
     selected = null;
   }
@@ -264,43 +310,50 @@
     const minCol = Math.min(c1, c2);
     const maxCol = Math.max(c1, c2);
 
-    const tl = cells[minRow][minCol];
-    const tr = cells[minRow][maxCol];
-    const br = cells[maxRow][maxCol];
-    const bl = cells[maxRow][minCol];
+    const tl = currentBoard[minRow][minCol];
+    const tr = currentBoard[minRow][maxCol];
+    const br = currentBoard[maxRow][maxCol];
+    const bl = currentBoard[maxRow][minCol];
 
-    const temp = tl.style.backgroundColor;
+    currentBoard[minRow][minCol] = bl;
+    currentBoard[minRow][maxCol] = tl;
+    currentBoard[maxRow][maxCol] = tr;
+    currentBoard[maxRow][minCol] = br;
 
-    tl.style.backgroundColor = bl.style.backgroundColor;
-    bl.style.backgroundColor = br.style.backgroundColor;
-    br.style.backgroundColor = tr.style.backgroundColor;
-    tr.style.backgroundColor = temp;
+    updateGrid();
+  }
 
-    // Update current board state
-    currentBoard[minRow][minCol] = tl.style.backgroundColor;
-    currentBoard[minRow][maxCol] = tr.style.backgroundColor;
-    currentBoard[maxRow][maxCol] = br.style.backgroundColor;
-    currentBoard[maxRow][minCol] = bl.style.backgroundColor;
+  function undoMove() {
+    if (moveHistory.length > 1 && moves > 0) {
+      moveHistory.pop(); 
+      moveSequence.pop();
+      const previousState = moveHistory[moveHistory.length - 1];
+      currentBoard = previousState.map(row => [...row]);
+      moves--;
+      updateGrid();
+      updateScore();
+      updateMoveLimit();
+      updateMoveLog();
+    }
+  }
+
+  function updateMoveLog() {
+    moveLogDisplay.innerHTML = moveSequence
+      .map((m, i) => `<div>${i+1}. ${m}</div>`)
+      .join("");
+    moveLogDisplay.scrollTop = moveLogDisplay.scrollHeight;
   }
 
   function updateScore() {
     let totalScore = 0;
-    const breakdown = {};
-
-    for (const color of colors) {
-      const colorScore = largestCluster(color);
-      breakdown[color] = colorScore;
-      totalScore += colorScore;
-    }
-
+    let breakdown = "";
+    colors.forEach(color => {
+      const s = largestCluster(color);
+      totalScore += s;
+      breakdown += `${color.toUpperCase().charAt(0) + color.slice(1)}: ${s} `;
+    });
     scoreDisplay.textContent = `Total Score: ${totalScore}`;
-
-    // Update score breakdown display
-    let breakdownText = "";
-    for (const color in breakdown) {
-      breakdownText += `${color.charAt(0).toUpperCase() + color.slice(1)}: ${breakdown[color]}<br>`;
-    }
-    scoreBreakdownDisplay.innerHTML = breakdownText;
+    scoreBreakdownDisplay.textContent = breakdown;
   }
 
   function updateMoveLimit() {
@@ -310,54 +363,37 @@
   function largestCluster(targetColor) {
     const visited = Array.from({ length: size }, () => Array(size).fill(false));
     let maxSize = 0;
-
     for (let r = 0; r < size; r++) {
       for (let c = 0; c < size; c++) {
-        if (!visited[r][c] && cells[r][c].style.backgroundColor === targetColor) {
-          const sizeCluster = floodFill(r, c, targetColor, visited);
-          maxSize = Math.max(maxSize, sizeCluster);
+        if (!visited[r][c] && currentBoard[r][c] === targetColor) {
+          maxSize = Math.max(maxSize, floodFill(r, c, targetColor, visited));
         }
       }
     }
-
     return maxSize;
   }
 
   function floodFill(r, c, color, visited) {
     const stack = [[r, c]];
     let count = 0;
-
     while (stack.length > 0) {
       const [row, col] = stack.pop();
-
-      if (
-        row < 0 || row >= size ||
-        col < 0 || col >= size ||
-        visited[row][col] ||
-        cells[row][col].style.backgroundColor !== color
-      ) continue;
-
+      if (row < 0 || row >= size || col < 0 || col >= size || visited[row][col] || currentBoard[row][col] !== color) continue;
       visited[row][col] = true;
       count++;
-
-      // 4-directional neighbors
-      stack.push([row + 1, col]);
-      stack.push([row - 1, col]);
-      stack.push([row, col + 1]);
-      stack.push([row, col - 1]);
+      stack.push([row+1, col], [row-1, col], [row, col+1], [row, col-1]);
     }
-
     return count;
   }
 
-  // Add New Game (Unlimited) functionality
-  document.getElementById('new-game-btn').addEventListener('click', () => {
-    startGame(false);  // New game without using the daily seed
+  document.getElementById('new-game-btn').addEventListener('click', () => startGame(false));
+  document.getElementById('undo-btn').addEventListener('click', undoMove);
+  document.getElementById('copy-log-btn').addEventListener('click', () => {
+    const text = `Color Spiral (${dateStr}) - Score: ${scoreDisplay.textContent.split(': ')[1]}\nSequence: ${moveSequence.join(", ")}`;
+    navigator.clipboard.writeText(text).then(() => alert("Results copied!"));
   });
 
-  // Initialize the game (Daily Mode)
   startGame(true);
 </script>
-
 </body>
 </html>
