@@ -1,2 +1,2 @@
 __ReadMe__
-<title>Sammy's Games</title>
+Sammy's Games

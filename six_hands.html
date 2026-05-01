@@ -199,7 +199,7 @@
     #groupList { font-size: 0.85rem; color: #ccc; line-height: 1.6; }
     .handname { font-style: italic; color: #007bff; margin-left: 18px; font-size: 0.8rem; }
     .result { margin-top: 15px; font-size: 1.2rem; font-weight: bold; }
-    .score-summary { margin-top: 10px; font-size: 0.9rem; color: #888; border-top: 1px solid #333; padding-top: 10px; }
+    .score-summary { margin-top: 10px; font-size: 0.9rem; color: #888; border-top: 1px solid #333; padding-top: 10px; line-height: 1.4; }
 
   </style>
 </head>
@@ -222,9 +222,8 @@
 
     <div class="rules-panel">
       <h3>Rules</h3>
-      <p>1. Form 5 connected groups of 6 cards using colors.</p>
-      <p>2. Select exactly one card (★) from each color group.</p>
-      <p>3. This forms your 6th hand. The other 5 cards in each group form hands 1-5.</p>
+      <p>1. Form 5 connected groups of 6 cards using the colors.</p>
+      <p>2. Star exactly one card (★) from each color group to form your 6th hand.</p>
       <br>
       <p><strong>Goal:</strong> Your <u>weakest</u> hand must be as strong as possible.</p>
     </div>
@@ -378,91 +377,103 @@ function isConnected(cards,color){
   return visited.size===6;
 }
 
-function updateGroupsAndValidation(){
-  const groupList=document.getElementById("groupList");
-  const resultDiv=document.getElementById("validationResult");
-  const scoreDisplay=document.getElementById("scoreDisplay");
-  groupList.innerHTML=""; scoreDisplay.textContent="";
+function updateGroupsAndValidation() {
+  const groupList = document.getElementById("groupList");
+  const resultDiv = document.getElementById("validationResult");
+  const scoreDisplay = document.getElementById("scoreDisplay");
+  groupList.innerHTML = ""; scoreDisplay.textContent = "";
 
-  const cards=Array.from(document.querySelectorAll(".card"));
-  const counts={}, darkCounts={};
-  highlightColors.forEach(c=>{ counts[c.code]=0; darkCounts[c.code]=0; });
+  const cards = Array.from(document.querySelectorAll(".card"));
+  const counts = {}, darkCounts = {};
+  highlightColors.forEach(c => { counts[c.code] = 0; darkCounts[c.code] = 0; });
 
-  const darkCards=[];
-  const handResults=[];
+  const darkCards = [];
+  const handResults = [];
 
-  cards.forEach(card=>{
-    if(card.dataset.highlight){
+  // Helper function to sort cards by rank value
+  const sortByRank = (a, b) => {
+    const v = x => x.toLowerCase().includes("joker") ? 15 : (rankValue[x.slice(0, -1)] || 0);
+    return v(b) - v(a);
+  };
+
+  cards.forEach(card => {
+    if (card.dataset.highlight) {
       counts[card.dataset.highlight]++;
-      if(card.classList.contains("darkened")){
+      if (card.classList.contains("darkened")) {
         darkCounts[card.dataset.highlight]++;
         darkCards.push(card.dataset.cardStr);
       }
     }
   });
 
-  highlightColors.forEach(colorObj=>{
-    const visibleCards=cards
-      .filter(card=>card.dataset.highlight===colorObj.code&&!card.classList.contains("darkened"))
-      .map(card=>card.dataset.cardStr);
+  highlightColors.forEach(colorObj => {
+    // Filter and then SORT by rank
+    const visibleCards = cards
+      .filter(card => card.dataset.highlight === colorObj.code && !card.classList.contains("darkened"))
+      .map(card => card.dataset.cardStr)
+      .sort(sortByRank);
 
-    const line=document.createElement("div");
-    line.innerHTML=`<span class="group-dot" style="background:${colorObj.code}"></span>` + visibleCards.join(", ");
+    const line = document.createElement("div");
+    line.innerHTML = `<span class="group-dot" style="background:${colorObj.code}"></span>` + (visibleCards.length ? visibleCards.join(", ") : "—");
     groupList.appendChild(line);
 
-    if(visibleCards.length===5){
-      const result=evaluateHand(visibleCards);
-      result.cards=visibleCards;
+    if (visibleCards.length === 5) {
+      const result = evaluateHand(visibleCards);
+      result.cards = visibleCards; // These are now sorted
       handResults.push(result);
-      const hand=document.createElement("div");
-      hand.className="handname";
-      hand.dataset.index=handResults.length-1;
-      hand.textContent="→ "+result.name;
+      const hand = document.createElement("div");
+      hand.className = "handname";
+      hand.dataset.index = handResults.length - 1;
+      hand.textContent = "→ " + result.name;
       groupList.appendChild(hand);
     }
   });
 
-  if(darkCards.length > 0){
-    const darkLine=document.createElement("div");
+  // Sort the dark (Sixth) hand as well
+  darkCards.sort(sortByRank);
+
+  if (darkCards.length > 0) {
+    const darkLine = document.createElement("div");
     darkLine.style.marginTop = "10px";
-    darkLine.innerHTML='<span class="group-dot" style="background:#ffd700"></span>Sixth: '+darkCards.join(", ");
+    darkLine.innerHTML = `<span class="group-dot" style="background:#ffd700"></span>Sixth/Star: ` + darkCards.join(", ");
     groupList.appendChild(darkLine);
   }
 
-  if(darkCards.length===5){
-    const result=evaluateHand(darkCards);
-    result.cards=darkCards;
+  if (darkCards.length === 5) {
+    const result = evaluateHand(darkCards);
+    result.cards = darkCards;
     handResults.push(result);
-    const hand=document.createElement("div");
-    hand.className="handname";
-    hand.dataset.index=handResults.length-1;
-    hand.textContent="→ "+result.name;
+    const hand = document.createElement("div");
+    hand.className = "handname";
+    hand.dataset.index = handResults.length - 1;
+    hand.textContent = "→ " + result.name;
     groupList.appendChild(hand);
   }
 
-  const allColored=cards.every(card=>card.dataset.highlight);
-  const sixPerColor=highlightColors.every(c=>counts[c.code]===6);
-  const oneDarkEach=highlightColors.every(c=>darkCounts[c.code]===1);
-  const connectedGroups=highlightColors.every(c=>isConnected(cards,c.code));
+  const allColored = cards.every(card => card.dataset.highlight);
+  const sixPerColor = highlightColors.every(c => counts[c.code] === 6);
+  const oneDarkEach = highlightColors.every(c => darkCounts[c.code] === 1);
+  const connectedGroups = highlightColors.every(c => isConnected(cards, c.code));
 
-  if(allColored&&sixPerColor&&oneDarkEach&&connectedGroups&&handResults.length===6){
-    resultDiv.textContent="✓ VALID"; resultDiv.style.color="#28a745";
-    const hands=[...document.querySelectorAll(".handname")];
-    let lowestHand=null, lowestVector=null;
-    hands.forEach(h=>{
-      const result=handResults[h.dataset.index];
-      if(!lowestVector||compareHands(result.rankVector,lowestVector)<0){ lowestVector=result.rankVector; lowestHand=h; }
+  if (allColored && sixPerColor && oneDarkEach && connectedGroups && handResults.length === 6) {
+    resultDiv.textContent = "✓ VALID"; resultDiv.style.color = "#28a745";
+    const hands = [...document.querySelectorAll(".handname")];
+    let lowestHand = null, lowestVector = null;
+    hands.forEach(h => {
+      const result = handResults[h.dataset.index];
+      if (!lowestVector || compareHands(result.rankVector, lowestVector) < 0) {
+        lowestVector = result.rankVector; lowestHand = h;
+      }
     });
-    if(lowestHand){
-      const lr=handResults[lowestHand.dataset.index];
-      lowestHand.style.fontWeight="bold"; lowestHand.style.color="#ffd700";
-      scoreDisplay.innerHTML="<strong>Weakest Hand:</strong> "+lr.name;
+    if (lowestHand) {
+      const lr = handResults[lowestHand.dataset.index];
+      lowestHand.style.fontWeight = "bold"; lowestHand.style.color = "#ffd700";
+      scoreDisplay.innerHTML = `<strong>Score:</strong> ${lr.name}<br><span style="color:#eee; font-size:0.8rem;">${lr.cards.join(", ")}</span>`;
     }
   } else {
-    resultDiv.textContent="✗ INVALID"; resultDiv.style.color="#dc3545";
+    resultDiv.textContent = "✗ INVALID"; resultDiv.style.color = "#dc3545";
   }
 }
-
 function dealGrid(){
   const deck=createDeck();
   const random=mulberry32(getDailySeed());

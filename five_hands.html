@@ -174,7 +174,7 @@
     #groupList { font-size: 0.85rem; color: #ccc; }
     .handname { font-style: italic; color: #007bff; margin-left: 18px; font-size: 0.8rem; }
     .result { margin-top: 15px; font-size: 1.2rem; font-weight: bold; }
-    .score-summary { margin-top: 10px; font-size: 0.9rem; color: #888; border-top: 1px solid #333; padding-top: 10px; }
+    .score-summary { margin-top: 10px; font-size: 0.9rem; color: #888; border-top: 1px solid #333; padding-top: 10px; line-height: 1.4; }
 
   </style>
 </head>
@@ -370,7 +370,8 @@ function updateGroupsAndValidation() {
     if (lowestHand) {
       const lr = handResults[lowestHand.dataset.index];
       lowestHand.style.fontWeight = "bold"; lowestHand.style.color = "#FFD700";
-      scoreDisplay.innerHTML = "<strong>Weakest Hand:</strong> " + lr.nm;
+      // Updated display as requested
+      scoreDisplay.innerHTML = `<strong>Score:</strong> ${lr.nm}<br><span style="color:#eee; font-size:0.8rem;">${lr.cards.join(", ")}</span>`;
     }
   } else {
     resultDiv.textContent = "✗ INVALID"; resultDiv.style.color = "#dc3545";
