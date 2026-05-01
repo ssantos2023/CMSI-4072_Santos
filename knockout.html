@@ -1,326 +1,322 @@
 <!DOCTYPE html>
-<html>
-<title>Sammy's Games</title>
-<h1>Knockout</h1>
-<nav>
-  <a href="index.html">Home</a> |
-  <a href="rps.html">RPS</a> |
-  <a href="knockout.html">Knockout</a> |
-  <a href="knockout_bot.html">Knockout Bot</a> |
-  <a href="five_hands.html">Five Hands</a> |
-  <a href="six_hands.html">Six Hands</a> |
-  <a href="step_count.html">Step Count</a> |
-  <a href="spiral_puzzle.html">Color Spiral</a>
-
-</nav>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knockout - Sammy's Games</title>
   <style>
-    .page {
-      display: flex;
+    /* Global Styles */
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background-color: #121212; 
+      color: white; 
+      text-align: center; 
+      margin: 0;
+      padding: 0;
     }
+
+    /* Navigation Bar */
+    nav {
+      background-color: #1e1e1e;
+      padding: 15px;
+      border-bottom: 1px solid #333;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: #aaa;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #007bff;
+    }
+
+    h1 {
+      margin-top: 30px;
+      font-size: 2.5rem;
+      color: #007bff;
+    }
+
+    .page-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    #rulesBox {
+      background-color: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 15px;
+      padding: 25px;
+      width: 350px;
+      text-align: left;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    #rulesBox h3 { color: #007bff; margin-top: 0; }
+    #rulesBox p { color: #ccc; }
+
+    .gameArea {
+      background-color: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 15px;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
     .board {
       display: grid;
       grid-template-columns: repeat(4, 80px);
       grid-template-rows: repeat(4, 80px);
-      gap: 5px;
-      margin: 50px 0;
-      width: max-content;
+      gap: 8px;
+      margin: 20px 0;
+      background: #333;
+      padding: 8px;
+      border-radius: 10px;
     }
 
-
     .cell {
-      background: lightgray;
-      border: 1px solid black;
+      background: #2a2a2a;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 30px;
+      font-size: 32px;
+      font-weight: bold;
       cursor: pointer;
+      transition: all 0.2s ease;
+      color: #fff;
     }
 
-    .selected {
-      background: yellow;
-    }
-    .valid {
-      background: lightskyblue;
-    }
-    .wrapper {
-      display: flex;
-      justify-content: center;   /* centers horizontally */
-    }
+    .cell.selected { background: #007bff !important; }
+    .cell.valid { background: #1a4a2a; border: 2px solid #28a745; }
 
-    .container {
-      display: flex;
-      gap: 10px;
-      align-items: center;   /* <-- This centers vertically */
-    }
-    #rulesBox {
-      width: 400px;
-      padding: 20px;
-    }
-    .gameArea {
-      flex: 1;                 /* take remaining space */
-      display: flex;
-      justify-content: center; /* center board + move info */
-      gap: 20px;
-      align-items: center;
-    }
     #moveInfo {
-      width: 160px;   /* Adjust if needed */
+      background: #121212;
+      padding: 15px;
+      border-radius: 10px;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      border: 1px solid #333;
     }
+
+    #moveInfo strong { color: #007bff; }
+
     #announcement {
       position: absolute;
-      top: 120px;
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
-      background: crimson;
+      transform: translate(-50%, -50%);
+      background: #dc3545;
       color: white;
-      padding: 15px 30px;
-      font-size: 22px;
+      padding: 20px 40px;
+      font-size: 24px;
       font-weight: bold;
-      border-radius: 8px;
+      border-radius: 12px;
       display: none;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      z-index: 10;
+      box-shadow: 0 0 50px rgba(0,0,0,0.8);
     }
-
   </style>
 </head>
 <body>
 
-  <div class="page">
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="rps.html">RPS</a>
+    <a href="knockout.html">Knockout</a>
+    <a href="knockout_bot.html">Knockout Bot</a>
+    <a href="five_hands.html">Five Hands</a>
+    <a href="six_hands.html">Six Hands</a>
+    <a href="step_count.html">Step Count</a>
+    <a href="spiral_puzzle.html">Color Spiral</a>
+  </nav>
 
+  <h1>Knockout</h1>
+
+  <div class="page-wrapper">
     <div id="rulesBox">
-      <h3>Rules</h3>
-        <p>Knockout is a 2-player abstract strategy game with unique movement mechanics.</p>
-        <p>The goal is to win by knocking one of the opponent’s pieces off the board.</p>
-        <p>On your turn, you must make either a normal move or a push move.</p>
-        <p>Normal move: Move one of your pieces to an empty space any amount of empty spaces away in an orthogonal direction.</p>
-        <p>Push move: Move one of your pieces one space in an orthogonal direction. If this puts it on the same space as another piece, that piece is then pushed one space in the same direction. A pushed piece can in turn push another piece, and so on. Both players’ pieces can be pushed by either player.</p>
-        <p>Your last move is noted on the right. You may not make a push move in the same direction as your last move.</p>
-      </div>
-      
-      <div class="gameArea">
-        <div id="announcement"></div>
-        <div class="board" id="board"></div>
-    
-        <div id="moveInfo">
-          <p><strong>X Last Move:</strong> <span id="xMove">None</span></p>
-          <p><strong>O Last Move:</strong> <span id="oMove">None</span></p>
-        </div>
-      </div>
-    
+      <h3>How to Play</h3>
+      <p><strong>Normal Move:</strong> Slide any distance to an <em>empty</em> square in a straight line. (Always allowed).</p>
+      <p><strong>Push Move:</strong> Move 1 space into a square with a piece. That piece is pushed!</p>
+      <p><strong>The Catch:</strong> You cannot perform a <u>Push Move</u> in the same direction you moved last turn.</p>
     </div>
+      
+    <div class="gameArea">
+      <div id="announcement"></div>
+      <div class="board" id="board"></div>
+      <div id="moveInfo">
+        <p><strong>X Last:</strong> <span id="xMove">None</span></p>
+        <p><strong>O Last:</strong> <span id="oMove">None</span></p>
+      </div>
+    </div>
+  </div>
   
 <script>
 let boardState = Array(16).fill(null);
-
 let selectedIndex = null;
-let xturn = false;
+let xturn = true; 
 let lastMoveX = "None";
 let lastMoveO = "None";
 
-// Put starting pieces
-boardState[0] = "X";
-boardState[1] = "X";
-boardState[2] = "X";
-boardState[3] = "X";
-boardState[12] = "O";
-boardState[13] = "O";
-boardState[14] = "O";
-boardState[15] = "O";
+const board = document.getElementById("board");
 
-for (let i = 0; i < 16; i++) {
-  let cell = document.createElement("div");
-  cell.className = "cell";
-  cell.dataset.index = i;
-  cell.textContent = boardState[i];
-  cell.onclick = () => handleClick(i);
-  board.appendChild(cell);
+boardState[0] = "X"; boardState[1] = "X"; boardState[2] = "X"; boardState[3] = "X";
+boardState[12] = "O"; boardState[13] = "O"; boardState[14] = "O"; boardState[15] = "O";
+
+function createBoard() {
+  board.innerHTML = "";
+  for (let i = 0; i < 16; i++) {
+    let cell = document.createElement("div");
+    cell.className = "cell";
+    cell.dataset.index = i;
+    cell.textContent = boardState[i];
+    cell.onclick = () => handleClick(i);
+    board.appendChild(cell);
+  }
 }
 
 function handleClick(i) {
-
-  // If clicking the already selected piece → deselect it
   if (selectedIndex === i) {
-      selectedIndex = null;
-      updateBoard();
-      return;
-    }
+    selectedIndex = null;
+    updateBoard();
+    return;
+  }
 
-  // Attempt move or push
   if (selectedIndex !== null && validMove(selectedIndex, i)) {
-    // Edit last move data
+    const dir = moveDirection(selectedIndex, i);
+    
+    // Save move direction
     if (xturn) {
-      lastMoveX = moveDirection(selectedIndex, i)
-      document.getElementById("xMove").textContent = lastMoveX
+      lastMoveX = dir;
+      document.getElementById("xMove").textContent = lastMoveX;
     } else {
-      lastMoveO = moveDirection(selectedIndex, i)
-      document.getElementById("oMove").textContent = lastMoveO
+      lastMoveO = dir;
+      document.getElementById("oMove").textContent = lastMoveO;
     }
 
-    // If push move
+    // Logic for Pushing
     if (boardState[i] !== null) {
-      // Get direction to define step
-      if (moveDirection(selectedIndex, i) === "↑ Up") {
-        step = -4
-        edges = [0, 1, 2, 3]
-      } else if (moveDirection(selectedIndex, i) === "↓ Down") {
-        step = 4
-        edges = [12, 13, 14, 15]
-      } else if (moveDirection(selectedIndex, i) === "← Left") {
-        step = -1
-        edges = [0, 4, 8, 12]
-      } else if (moveDirection(selectedIndex, i) === "→ Right") {
-        step = 1
-        edges = [3, 7, 11, 15]
+      let step, edges;
+      if (dir === "↑ Up") { step = -4; edges = [0, 1, 2, 3]; }
+      else if (dir === "↓ Down") { step = 4; edges = [12, 13, 14, 15]; }
+      else if (dir === "← Left") { step = -1; edges = [0, 4, 8, 12]; }
+      else if (dir === "→ Right") { step = 1; edges = [3, 7, 11, 15]; }
+      
+      let pushedPiece = boardState[i];
+      let pushedIndex = i;
+      
+      boardState[i] = boardState[selectedIndex];
+      boardState[selectedIndex] = null;
+      selectedIndex = null;
+      xturn = !xturn;
+
+      while (true) {
+        if (edges.includes(pushedIndex)) {
+          updateBoard();
+          announce(pushedPiece + " was pushed off! Game Over!");
+          return;
+        } else {
+          pushedIndex += step;
+          if (boardState[pushedIndex] === null) {
+            boardState[pushedIndex] = pushedPiece;
+            break;
+          } else {
+            let temp = boardState[pushedIndex];
+            boardState[pushedIndex] = pushedPiece;
+            pushedPiece = temp;
+          }
+        }
       }
-      // Save the piece being pushed
-      pushedPiece = boardState[i]
-      pushedIndex = i
-      // Usual movement handling
+      updateBoard();
+    } else {
+      // Logic for Normal Move
       boardState[i] = boardState[selectedIndex];
       boardState[selectedIndex] = null;
       selectedIndex = null;
       xturn = !xturn;
       updateBoard();
-      while (true) {
-        // If the piece that got pushed was on an edge, it dies and game ends
-        if (edges.includes(pushedIndex)) {
-          announce(pushedPiece + " was pushed off! Game Over!");
-          break;
-        } else {
-          pushedIndex += step
-          if (boardState[pushedIndex] === null) {
-            // If pushed onto an empty space, update and end loop
-            boardState[pushedIndex] = pushedPiece
-            updateBoard();
-            break
-          } else {
-            // Move piece and repeat
-            temp = boardState[pushedIndex]
-            boardState[pushedIndex] = pushedPiece
-            pushedPiece = temp
-            updateBoard()
-          }
-        }
-      }
-    } else {
-    // push OR move
-    
-    boardState[i] = boardState[selectedIndex];
-    boardState[selectedIndex] = null;
-
-    selectedIndex = null;
-    xturn = !xturn;
-    
-    updateBoard();
-    return
     }
+    return;
   }
-  // Select piece
-  if (boardState[i] === "X" && xturn) {
+
+  if ((boardState[i] === "X" && xturn) || (boardState[i] === "O" && !xturn)) {
     selectedIndex = i;
     updateBoard();
-    return;
-  } else if (boardState[i] === "O" && !xturn) {
-    selectedIndex = i;
-    updateBoard();
-    return;
   }
 }
+
 function announce(message) {
   const box = document.getElementById("announcement");
   box.textContent = message;
   box.style.display = "block";
 }
-// Checks if a move from start to end is valid, returns true or false
+
 function validMove(start, end) {
-  // Gets the row and column of the start and end square
-  let startRow = Math.floor(start / 4);
-  let endRow = Math.floor(end / 4);
-  let startCol = start % 4;
-  let endCol = end % 4;
-  // If not in the same row and not in the same column, return false
-  if (startRow !== endRow && startCol !== endCol) {
-    return false;
+  let startRow = Math.floor(start / 4), endRow = Math.floor(end / 4);
+  let startCol = start % 4, endCol = end % 4;
+  if (startRow !== endRow && startCol !== endCol) return false;
+
+  const dir = moveDirection(start, end);
+  
+  // Is it a push attempt? (Target square is occupied)
+  if (boardState[end] !== null) {
+    const isAdjacent = (startRow === endRow && Math.abs(startCol - endCol) === 1) || 
+                       (startCol === endCol && Math.abs(startRow - endRow) === 1);
+    
+    if (!isAdjacent) return false; // Can only push adjacent pieces
+    
+    // Check push restriction
+    if (xturn && dir === lastMoveX) return false;
+    if (!xturn && dir === lastMoveO) return false;
+    
+    return true;
   }
-  // If in same row
-  if (startRow === endRow) {
-    // True if adjacent and not repeating (push move)
-    if (start - end === 1 || start - end === -1) {
-      if (xturn && moveDirection(start, end) !== lastMoveX) {
-        return true }
-      if (!xturn && moveDirection(start, end) !== lastMoveO) {
-        return true }
-    }
-    // False if any squares between are occupied
-    let step = end > start ? 1 : -1;
-    for (let i = start + step; i !== end; i += step) {
-      if (boardState[i] !== null) {
-        return false
-      }
-    }
+
+  // It's a normal move to an empty square
+  let step = (startRow === endRow) ? (end > start ? 1 : -1) : (end > start ? 4 : -4);
+  for (let i = start + step; i !== end; i += step) {
+    if (boardState[i] !== null) return false; // Path blocked
   }
-  // If in same column
-  if (startCol === endCol) {
-    // True if adjacent and not repeating (push move)
-    if (start - end === 4 || start - end === -4) {
-      if (xturn && moveDirection(start, end) !== lastMoveX) {
-        return true }
-      if (!xturn && moveDirection(start, end) !== lastMoveO) {
-        return true }    
-    }
-    // False if any squares between are occupied
-    let step = end > start ? 4 : -4;
-    for (let i = start + step; i !== end; i += step) {
-      if (boardState[i] !== null) {
-        return false
-      }
-    }
-  }
-  // Otherwise, true if end square is empty
-  if (boardState[end] === null) {
-    return true
-  }
+  return true;
 }
+
 function moveDirection(start, end) {
-  let startRow = Math.floor(start / 4);
-  let endRow = Math.floor(end / 4);
-  let startCol = start % 4;
-  let endCol = end % 4;
-  if (startRow === endRow) {
-    if (startCol > endCol) {
-      return "← Left"
-    }
-    return "→ Right"
-  }
-  if (startCol === endCol) {
-    if (startRow > endRow) {
-      return "↑ Up"
-    }
-    return "↓ Down"
-  }
+  let startRow = Math.floor(start / 4), endRow = Math.floor(end / 4);
+  let startCol = start % 4, endCol = end % 4;
+  if (startRow === endRow) return startCol > endCol ? "← Left" : "→ Right";
+  if (startCol === endCol) return startRow > endRow ? "↑ Up" : "↓ Down";
 }
 
 function updateBoard() {
   document.querySelectorAll(".cell").forEach((cell, i) => {
     cell.textContent = boardState[i];
-
-    // If there is a selected tile (yellow), make the empty spaces in same row/col valid (blue)
+    cell.classList.remove("valid", "selected");
     if (selectedIndex !== null) {
-      if (validMove(selectedIndex, i)) {
-        cell.classList.add("valid");
-      } else {
-        cell.classList.remove("valid");
-      }
-    } else {
-      cell.classList.remove("valid");
+      if (validMove(selectedIndex, i)) cell.classList.add("valid");
+      if (i === selectedIndex) cell.classList.add("selected");
     }
-    cell.classList.toggle("selected", i === selectedIndex);
   });
 }
 
-
+createBoard();
+updateBoard();
 </script>
 
 </body>

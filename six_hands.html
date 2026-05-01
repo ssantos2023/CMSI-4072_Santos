@@ -1,345 +1,270 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Sammy's Games - Six Hands</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=IM+Fell+English&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Six Hands - Sammy's Games</title>
+  <style>
+    /* Global Styles (Platform Consistent) */
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background-color: #121212; 
+      color: white; 
+      text-align: center; 
+      margin: 0;
+      padding: 0;
+    }
 
-<style>
+    /* Navigation Bar */
+    nav {
+      background-color: #1e1e1e;
+      padding: 15px;
+      border-bottom: 1px solid #333;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    nav a {
+      color: #aaa;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s;
+    }
 
-body {
-  font-family: 'IM Fell English', Georgia, serif;
-  text-align: center;
-  background: #1a3a1a;
-  background-image:
-    radial-gradient(ellipse at 20% 50%, rgba(0,80,0,0.3) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 20%, rgba(0,60,0,0.3) 0%, transparent 60%),
-    repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(0,0,0,0.04) 40px, rgba(0,0,0,0.04) 41px);
-  min-height: 100vh;
-  color: #f0e8d0;
-}
+    nav a:hover {
+      color: #007bff;
+    }
 
-h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 3.1rem;
-  color: #f0e8d0;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 0 40px rgba(180,150,60,0.3);
-  padding: 20px 0 4px;
-  letter-spacing: 0.05em;
-}
+    h1 {
+      margin-top: 30px;
+      font-size: 2.5rem;
+      color: #007bff;
+    }
 
-nav {
-  margin: 8px 0 16px;
-  font-size: 1.05rem;
-}
-nav a { color: #c9b06a; text-decoration: none; margin: 0 6px; }
-nav a:hover { color: #f0e8d0; text-decoration: underline; }
+    /* Layout */
+    .page-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      padding: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
 
-.layout {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  padding: 10px 20px 30px;
-  align-items: flex-start;
-}
+    /* Side Panels */
+    .rules-panel, .groups-panel {
+      background-color: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 15px;
+      padding: 25px;
+      width: 280px;
+      text-align: left;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
 
-.rules-panel, .groups-panel {
-  width: 220px;
-  text-align: left;
-  background: rgba(0,0,0,0.35);
-  border: 1px solid rgba(180,150,60,0.3);
-  border-radius: 12px;
-  padding: 16px;
-  backdrop-filter: blur(4px);
-}
+    .rules-panel h3, .groups-panel h3 {
+      color: #007bff;
+      margin-top: 0;
+      border-bottom: 1px solid #333;
+      padding-bottom: 10px;
+    }
 
-.rules-panel h3, .groups-panel h3 {
-  font-family: 'Playfair Display', serif;
-  color: #c9b06a;
-  font-size: 1.3rem;
-  border-bottom: 1px solid rgba(180,150,60,0.3);
-  padding-bottom: 6px;
-  margin-bottom: 10px;
-}
+    .rules-panel p {
+      font-size: 0.9rem;
+      color: #ccc;
+      line-height: 1.5;
+    }
 
-.rules-panel p {
-  font-size: 0.97rem;
-  line-height: 1.55;
-  color: #d4c9a8;
-  margin-bottom: 8px;
-}
+    /* Center Game Area */
+    .center-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
 
-.color-picker {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 14px;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-}
+    /* Color Picker */
+    .color-picker {
+      display: flex;
+      gap: 10px;
+      background: #1e1e1e;
+      padding: 12px 20px;
+      border-radius: 50px;
+      border: 1px solid #333;
+      align-items: center;
+    }
 
-.color-button {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 3px solid rgba(255,255,255,0.3);
-  cursor: pointer;
-  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-}
+    .color-button {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+    }
 
-.color-button:hover { transform: scale(1.15); }
+    .color-button.selected-color {
+      border-color: white;
+      transform: scale(1.15);
+    }
 
-.color-button.selected-color {
-  border-color: #fff;
-  transform: scale(1.2);
-  box-shadow: 0 0 0 2px rgba(255,255,255,0.5), 0 4px 12px rgba(0,0,0,0.5);
-}
+    /* Star Mode Button specific styling */
+    .star-btn {
+      background-color: #333;
+      border-color: rgba(255, 215, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffd700;
+      font-weight: bold;
+    }
 
-.center-area {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+    /* Grid and Cards */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(6, 78px);
+      grid-template-rows: repeat(5, 110px);
+      gap: 8px;
+    }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(6, 78px);
-  grid-template-rows: repeat(5, 110px);
-  gap: 8px;
-}
+    .card {
+      width: 78px;
+      height: 110px;
+      border-radius: 8px;
+      background: #fdf8f0;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s;
+      user-select: none;
+      color: #111;
+    }
 
-/* ── CARD BASE ── */
-.card {
-  width: 78px;
-  height: 110px;
-  border-radius: 8px;
-  background: #fdf8f0;
-  border: 1px solid #ccc;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.6);
-  cursor: pointer;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.15s, box-shadow 0.15s, filter 0.2s;
-  user-select: none;
-  overflow: hidden;
-}
+    .card:hover {
+      transform: translateY(-5px);
+      z-index: 5;
+    }
 
-.card:hover {
-  transform: translateY(-4px) scale(1.04);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(255,255,255,0.6);
-  z-index: 2;
-}
+    /* Card face styling */
+    .card-corner { position: absolute; top: 4px; left: 5px; display: flex; flex-direction: column; align-items: center; line-height: 1; }
+    .card-corner-bottom { position: absolute; bottom: 4px; right: 5px; display: flex; flex-direction: column; align-items: center; line-height: 1; transform: rotate(180deg); }
+    .corner-rank { font-size: 16px; font-weight: bold; }
+    .corner-suit { font-size: 11px; }
+    .card-center { font-size: 32px; pointer-events: none; }
 
-/* Top-left rank+suit */
-.card-corner {
-  position: absolute;
-  top: 4px;
-  left: 5px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  line-height: 1;
-}
+    /* Suit Colors on Card */
+    .card.red-suit { color: #cc1111; }
+    .card.blue-suit { color: #1144cc; }
+    .card.green-suit { color: #117722; }
+    .card.black-suit { color: #111; }
 
-/* Bottom-right (rotated 180°) */
-.card-corner-bottom {
-  position: absolute;
-  bottom: 4px;
-  right: 5px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  line-height: 1;
-  transform: rotate(180deg);
-}
+    /* Highlights */
+    .card.highlighted::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 7px;
+      background: var(--highlight-color);
+      opacity: 0.5;
+      pointer-events: none;
+    }
 
-.corner-rank {
-  font-family: 'Playfair Display', serif;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1;
-}
+    /* Darkened (Star mode) */
+    .card.darkened {
+      filter: brightness(60%) saturate(60%);
+    }
+    .card.darkened::before {
+      content: '★';
+      position: absolute;
+      font-size: 24px;
+      color: #ffd700;
+      z-index: 3;
+      text-shadow: 0 0 5px black;
+    }
 
-.corner-suit {
-  font-size: 13px;
-  line-height: 1;
-}
+    /* Status Display */
+    .group-dot {
+      display: inline-block;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
 
-/* Center pip */
-.card-center {
-  font-size: 36px;
-  line-height: 1;
-  pointer-events: none;
-}
+    #groupList { font-size: 0.85rem; color: #ccc; line-height: 1.6; }
+    .handname { font-style: italic; color: #007bff; margin-left: 18px; font-size: 0.8rem; }
+    .result { margin-top: 15px; font-size: 1.2rem; font-weight: bold; }
+    .score-summary { margin-top: 10px; font-size: 0.9rem; color: #888; border-top: 1px solid #333; padding-top: 10px; }
 
-/* Suit colors */
-.card.red-suit .corner-rank,
-.card.red-suit .corner-suit,
-.card.red-suit .card-center { color: #cc1111; }
-
-.card.blue-suit .corner-rank,
-.card.blue-suit .corner-suit,
-.card.blue-suit .card-center { color: #1144cc; }
-
-.card.green-suit .corner-rank,
-.card.green-suit .corner-suit,
-.card.green-suit .card-center { color: #117722; }
-
-.card.black-suit .corner-rank,
-.card.black-suit .corner-suit,
-.card.black-suit .card-center { color: #111; }
-
-/* Highlight tint — uses CSS variable so it works on any background including joker gradient */
-.card { --highlight-color: transparent; }
-.card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 7px;
-  pointer-events: none;
-  background: var(--highlight-color);
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-.card.highlighted::after { opacity: 0.4; }
-
-/* Darkened = selected for 6th hand */
-.card.darkened {
-  filter: brightness(55%) saturate(60%);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.6), inset 0 0 12px rgba(0,0,0,0.4);
-}
-.card.darkened::before {
-  content: '★';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-  font-size: 28px;
-  color: rgba(255,220,60,0.7);
-  z-index: 3;
-  pointer-events: none;
-}
-
-/* Joker card */
-.card.joker-card {
-  background: linear-gradient(135deg, #fdf8f0 0%, #ffe0e0 50%, #e0e8ff 100%);
-}
-
-/* Group list in sidebar */
-#groupList { font-size: 0.92rem; line-height: 1.6; color: #d4c9a8; }
-#groupList div { margin-bottom: 2px; }
-.handname { font-style: italic; color: #c9b06a; font-size: 0.88rem; margin-left: 8px; }
-
-.result {
-  margin-top: 12px;
-  font-family: 'Playfair Display', serif;
-  font-size: 1.4rem;
-  font-weight: bold;
-}
-
-.score {
-  margin-top: 8px;
-  font-size: 0.97rem;
-  color: #c9b06a;
-  line-height: 1.5;
-}
-
-/* Color swatch dots in group list */
-.group-dot {
-  display: inline-block;
-  width: 9px; height: 9px;
-  border-radius: 50%;
-  margin-right: 5px;
-  vertical-align: middle;
-  border: 1px solid rgba(255,255,255,0.3);
-}
-
-</style>
+  </style>
 </head>
-
 <body>
 
-<h1>Six Hands</h1>
-
-    <nav>
-      <a href="index.html">Home</a> |
-      <a href="rps.html">RPS</a> |
-      <a href="knockout.html">Knockout</a> |
-      <a href="knockout_bot.html">Knockout Bot</a> |
-      <a href="five_hands.html">Five Hands</a> |
-      <a href="six_hands.html">Six Hands</a> |
-      <a href="step_count.html">Step Count</a> |
-      <a href="spiral_puzzle.html">Color Spiral</a>
-  
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="rps.html">RPS</a>
+    <a href="knockout.html">Knockout</a>
+    <a href="knockout_bot.html">Knockout Bot</a>
+    <a href="five_hands.html">Five Hands</a>
+    <a href="six_hands.html">Six Hands</a>
+    <a href="step_count.html">Step Count</a>
+    <a href="spiral_puzzle.html">Color Spiral</a>
   </nav>
 
-<div class="layout">
+  <h1>Six Hands</h1>
 
-<div class="rules-panel">
-  <h3>Rules</h3>
-  <p>Form the grid of 30 cards into 6 five-card poker hands such that your lowest hand is as strong as possible.</p>
-  <p>First highlight 5 groups of 6 cards using the colors. Each group must be orthogonally connected.</p>
-  <p>Then select one card from each group (using black ★) to form the sixth hand.</p>
-  <p>The puzzle changes daily worldwide.</p>
-</div>
+  <div class="page-wrapper">
 
-<div class="center-area">
-  <div class="color-picker" id="colorPicker"></div>
-  <div class="grid" id="cardGrid"></div>
-</div>
+    <div class="rules-panel">
+      <h3>Rules</h3>
+      <p>1. Form 5 connected groups of 6 cards using colors.</p>
+      <p>2. Select exactly one card (★) from each color group.</p>
+      <p>3. This forms your 6th hand. The other 5 cards in each group form hands 1-5.</p>
+      <br>
+      <p><strong>Goal:</strong> Your <u>weakest</u> hand must be as strong as possible.</p>
+    </div>
 
-<div class="groups-panel">
-  <h3>Hands</h3>
-  <div id="groupList"></div>
-  <div id="validationResult" class="result">INVALID</div>
-  <div id="scoreDisplay" class="score"></div>
-</div>
+    <div class="center-area">
+      <div class="color-picker" id="colorPicker"></div>
+      <div class="grid" id="cardGrid"></div>
+    </div>
 
-</div>
+    <div class="groups-panel">
+      <h3>Your Hands</h3>
+      <div id="groupList"></div>
+      <div id="validationResult" class="result">✗ INVALID</div>
+      <div id="scoreDisplay" class="score-summary"></div>
+    </div>
+
+  </div>
 
 <script>
-
-function compareHands(a,b){
-  for(let i=0;i<a.length;i++){
-    if(a[i]!==b[i]) return a[i]-b[i];
-  }
-  return 0;
-}
-
 const suits=["s","h","d","c"];
 const ranks=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
-
-const rankValue={
-  "A":14,"K":13,"Q":12,"J":11,"10":10,
-  "9":9,"8":8,"7":7,"6":6,"5":5,
-  "4":4,"3":3,"2":2
-};
-
-// Suit symbols
+const rankValue={"A":14,"K":13,"Q":12,"J":11,"10":10,"9":9,"8":8,"7":7,"6":6,"5":5,"4":4,"3":3,"2":2};
 const suitSymbol={ "s":"♠","h":"♥","d":"♦","c":"♣" };
 
 const highlightColors=[
   {code:"#FFD700",label:"Yellow"},
-  {code:"#90EE90",label:"Green"},
-  {code:"#87CEFA",label:"Blue"},
-  {code:"#FFB6C1",label:"Pink"},
-  {code:"#4B0082",label:"Purple"}
+  {code:"#00FF00",label:"Green"},
+  {code:"#007bff",label:"Blue"},
+  {code:"#FF69B4",label:"Pink"},
+  {code:"#9370DB",label:"Purple"}
 ];
 
 const blackMode="#000000";
 let currentHighlight=highlightColors[0].code;
 
+function compareHands(a,b){ for(let i=0;i<a.length;i++) if(a[i]!==b[i]) return a[i]-b[i]; return 0; }
+
 function getDailySeed(){
   const today=new Date();
-  const dateString=today.getUTCFullYear()+"-"+(today.getUTCMonth()+1)+"-"+today.getUTCDate();
-  let seed=0;
-  for(let i=0;i<dateString.length;i++) seed=seed*31+dateString.charCodeAt(i);
-  return seed;
+  return today.getUTCFullYear() + (today.getUTCMonth()+1) * 100 + today.getUTCDate();
 }
 
 function mulberry32(a){
@@ -354,8 +279,7 @@ function mulberry32(a){
 function createDeck(){
   const deck=[];
   for(let suit of suits) for(let rank of ranks) deck.push(rank+suit);
-  deck.push("JOKER");
-  deck.push("joker");
+  deck.push("JOKER","joker");
   return deck;
 }
 
@@ -368,21 +292,13 @@ function shuffle(deck,random){
 
 function evaluateHand(cards){
   const deck=createDeck();
-
   function scoreHand(hand){
     const ranksArr=[], suitsArr=[];
-    hand.forEach(c=>{
-      let suit=c.slice(-1);
-      let rank=c.slice(0,-1);
-      ranksArr.push(rankValue[rank]);
-      suitsArr.push(suit);
-    });
+    hand.forEach(c=>{ ranksArr.push(rankValue[c.slice(0,-1)]); suitsArr.push(c.slice(-1)); });
     ranksArr.sort((a,b)=>b-a);
     const counts={};
     ranksArr.forEach(r=>counts[r]=(counts[r]||0)+1);
-    const groups=Object.entries(counts)
-      .map(([r,c])=>({rank:parseInt(r),count:c}))
-      .sort((a,b)=>b.count!==a.count?b.count-a.count:b.rank-a.rank);
+    const groups=Object.entries(counts).map(([r,c])=>({rank:parseInt(r),count:c})).sort((a,b)=>b.count!==a.count?b.count-a.count:b.rank-a.rank);
     const values=groups.map(g=>g.count);
     let orderedRanks=groups.flatMap(g=>Array(g.count).fill(g.rank));
     const flush=new Set(suitsArr).size===1;
@@ -405,27 +321,16 @@ function evaluateHand(cards){
     else if(values[0]===2){score=2;name="Pair";}
     return {score,name,rankVector:[score,...orderedRanks]};
   }
-
   const jokerIndex=cards.findIndex(c=>c.toLowerCase().includes("joker"));
   if(jokerIndex===-1) return scoreHand(cards);
-
   let best=null;
   for(let candidate of deck){
     if(cards.includes(candidate)) continue;
-    const test=[...cards];
-    test[jokerIndex]=candidate;
+    const test=[...cards]; test[jokerIndex]=candidate;
     const result=scoreHand(test);
     if(!best||compareHands(result.rankVector,best.rankVector)>0) best=result;
   }
   return best;
-}
-
-// Parse a card string into rank + suit
-function parseCard(cardStr){
-  if(cardStr==="JOKER"||cardStr==="joker") return {rank:cardStr,suit:null};
-  const suit=cardStr.slice(-1);
-  const rank=cardStr.slice(0,-1);
-  return {rank,suit};
 }
 
 function createColorPicker(){
@@ -434,29 +339,22 @@ function createColorPicker(){
     const button=document.createElement("div");
     button.className="color-button";
     button.style.backgroundColor=colorObj.code;
-    button.title=colorObj.label;
-    button.addEventListener("click",()=>{
+    button.onclick=()=>{
       currentHighlight=colorObj.code;
       document.querySelectorAll(".color-button").forEach(b=>b.classList.remove("selected-color"));
       button.classList.add("selected-color");
-    });
+    };
     picker.appendChild(button);
   });
 
   const blackButton=document.createElement("div");
-  blackButton.className="color-button";
-  blackButton.style.backgroundColor="#333";
-  blackButton.style.border="3px solid rgba(255,220,60,0.6)";
-  blackButton.title="Select for 6th hand";
-  blackButton.innerHTML='<span style="color:#ffd700;font-size:14px;line-height:26px;">★</span>';
-  blackButton.style.display="flex";
-  blackButton.style.alignItems="center";
-  blackButton.style.justifyContent="center";
-  blackButton.addEventListener("click",()=>{
+  blackButton.className="color-button star-btn";
+  blackButton.innerHTML='★';
+  blackButton.onclick=()=>{
     currentHighlight=blackMode;
     document.querySelectorAll(".color-button").forEach(b=>b.classList.remove("selected-color"));
     blackButton.classList.add("selected-color");
-  });
+  };
   picker.appendChild(blackButton);
 }
 
@@ -464,8 +362,7 @@ function isConnected(cards,color){
   const indices=[];
   cards.forEach((card,i)=>{ if(card.dataset.highlight===color) indices.push(i); });
   if(indices.length!==6) return false;
-  const visited=new Set();
-  const stack=[indices[0]];
+  const visited=new Set(), stack=[indices[0]];
   while(stack.length){
     const i=stack.pop();
     if(visited.has(i)) continue;
@@ -485,8 +382,7 @@ function updateGroupsAndValidation(){
   const groupList=document.getElementById("groupList");
   const resultDiv=document.getElementById("validationResult");
   const scoreDisplay=document.getElementById("scoreDisplay");
-  groupList.innerHTML="";
-  scoreDisplay.textContent="";
+  groupList.innerHTML=""; scoreDisplay.textContent="";
 
   const cards=Array.from(document.querySelectorAll(".card"));
   const counts={}, darkCounts={};
@@ -508,15 +404,10 @@ function updateGroupsAndValidation(){
   highlightColors.forEach(colorObj=>{
     const visibleCards=cards
       .filter(card=>card.dataset.highlight===colorObj.code&&!card.classList.contains("darkened"))
-      .map(card=>card.dataset.cardStr)
-      .sort((a,b)=>{
-        const rv=c=>(c==="JOKER"||c==="joker")?15:(rankValue[c.slice(0,-1)]||0);
-        return rv(b)-rv(a);
-      });
+      .map(card=>card.dataset.cardStr);
 
-    const dot=`<span class="group-dot" style="background:${colorObj.code}"></span>`;
     const line=document.createElement("div");
-    line.innerHTML=dot+colorObj.label+": "+visibleCards.join(", ");
+    line.innerHTML=`<span class="group-dot" style="background:${colorObj.code}"></span>` + visibleCards.join(", ");
     groupList.appendChild(line);
 
     if(visibleCards.length===5){
@@ -531,17 +422,12 @@ function updateGroupsAndValidation(){
     }
   });
 
-  const sep=document.createElement("div");
-  sep.style.cssText="margin:6px 0;border-top:1px solid rgba(180,150,60,0.3);";
-  groupList.appendChild(sep);
-
-  darkCards.sort((a,b)=>{
-    const rv=c=>(c==="JOKER"||c==="joker")?15:(rankValue[c.slice(0,-1)]||0);
-    return rv(b)-rv(a);
-  });
-  const darkLine=document.createElement("div");
-  darkLine.innerHTML='<span class="group-dot" style="background:#333;border-color:rgba(255,220,60,0.6);">★</span>Sixth: '+darkCards.join(", ");
-  groupList.appendChild(darkLine);
+  if(darkCards.length > 0){
+    const darkLine=document.createElement("div");
+    darkLine.style.marginTop = "10px";
+    darkLine.innerHTML='<span class="group-dot" style="background:#ffd700"></span>Sixth: '+darkCards.join(", ");
+    groupList.appendChild(darkLine);
+  }
 
   if(darkCards.length===5){
     const result=evaluateHand(darkCards);
@@ -557,91 +443,58 @@ function updateGroupsAndValidation(){
   const allColored=cards.every(card=>card.dataset.highlight);
   const sixPerColor=highlightColors.every(c=>counts[c.code]===6);
   const oneDarkEach=highlightColors.every(c=>darkCounts[c.code]===1);
-  const fiveDarkTotal=darkCards.length===5;
   const connectedGroups=highlightColors.every(c=>isConnected(cards,c.code));
 
-  if(allColored&&sixPerColor&&oneDarkEach&&fiveDarkTotal&&connectedGroups){
-    resultDiv.textContent="✓ VALID";
-    resultDiv.style.color="#6ddc6d";
-
+  if(allColored&&sixPerColor&&oneDarkEach&&connectedGroups&&handResults.length===6){
+    resultDiv.textContent="✓ VALID"; resultDiv.style.color="#28a745";
     const hands=[...document.querySelectorAll(".handname")];
     let lowestHand=null, lowestVector=null;
     hands.forEach(h=>{
       const result=handResults[h.dataset.index];
-      if(!lowestVector||compareHands(result.rankVector,lowestVector)<0){
-        lowestVector=result.rankVector;
-        lowestHand=h;
-      }
+      if(!lowestVector||compareHands(result.rankVector,lowestVector)<0){ lowestVector=result.rankVector; lowestHand=h; }
     });
-    hands.forEach(h=>h.style.fontWeight="normal");
     if(lowestHand){
-      const lowestResult=handResults[lowestHand.dataset.index];
-      lowestHand.style.fontWeight="bold";
-      lowestHand.style.color="#ffd700";
-      lowestHand.textContent+=" ⭐ Lowest";
-      scoreDisplay.innerHTML="<b>Score:</b> "+lowestResult.name+"<br>("+lowestResult.cards.join(", ")+")";
+      const lr=handResults[lowestHand.dataset.index];
+      lowestHand.style.fontWeight="bold"; lowestHand.style.color="#ffd700";
+      scoreDisplay.innerHTML="<strong>Weakest Hand:</strong> "+lr.name;
     }
   } else {
-    resultDiv.textContent="✗ INVALID";
-    resultDiv.style.color="#ff6b6b";
+    resultDiv.textContent="✗ INVALID"; resultDiv.style.color="#dc3545";
   }
 }
 
 function dealGrid(){
   const deck=createDeck();
-  const seed=getDailySeed();
-  const random=mulberry32(seed);
+  const random=mulberry32(getDailySeed());
   shuffle(deck,random);
-
   const grid=document.getElementById("cardGrid");
   grid.innerHTML="";
 
   for(let i=0;i<30;i++){
     const cardStr=deck[i];
-    const {rank,suit}=parseCard(cardStr);
     const cardDiv=document.createElement("div");
     cardDiv.className="card";
     cardDiv.dataset.cardStr=cardStr;
     cardDiv.dataset.highlight="";
 
-    const isJoker=(rank==="JOKER"||rank==="joker");
-
+    const isJoker=cardStr.toLowerCase().includes("joker");
     if(isJoker){
-      cardDiv.classList.add("joker-card");
-      cardDiv.innerHTML=`
-        <div class="card-corner"><span class="corner-rank" style="color:#cc1111;font-size:11px;">JKR</span></div>
-        <div class="card-center" style="font-size:28px;">🃏</div>
-        <div class="card-corner-bottom"><span class="corner-rank" style="color:#1144cc;font-size:11px;">JKR</span></div>
-      `;
+      cardDiv.innerHTML=`<div class="card-center">🃏</div>`;
     } else {
-      const sym=suitSymbol[suit];
-      let suitClass="black-suit";
-      if(suit==="h") suitClass="red-suit";
-      else if(suit==="d") suitClass="blue-suit";
-      else if(suit==="c") suitClass="green-suit";
+      const suit=cardStr.slice(-1), rank=cardStr.slice(0,-1), sym=suitSymbol[suit];
+      const suitClass=(suit==="h")?"red-suit":(suit==="d")?"blue-suit":(suit==="c")?"green-suit":"black-suit";
       cardDiv.classList.add(suitClass);
-
       cardDiv.innerHTML=`
-        <div class="card-corner">
-          <span class="corner-rank">${rank}</span>
-          <span class="corner-suit">${sym}</span>
-        </div>
+        <div class="card-corner"><span class="corner-rank">${rank}</span><span class="corner-suit">${sym}</span></div>
         <div class="card-center">${sym}</div>
-        <div class="card-corner-bottom">
-          <span class="corner-rank">${rank}</span>
-          <span class="corner-suit">${sym}</span>
-        </div>
-      `;
+        <div class="card-corner-bottom"><span class="corner-rank">${rank}</span><span class="corner-suit">${sym}</span></div>`;
     }
 
-    cardDiv.addEventListener("click",()=>{
+    cardDiv.onclick=()=>{
       if(currentHighlight===blackMode){
-        if(cardDiv.dataset.highlight){
-          cardDiv.classList.toggle("darkened");
-        }
+        if(cardDiv.dataset.highlight) cardDiv.classList.toggle("darkened");
       } else {
         if(cardDiv.dataset.highlight===currentHighlight){
-          cardDiv.style.setProperty("--highlight-color","transparent");
           cardDiv.dataset.highlight="";
           cardDiv.classList.remove("highlighted","darkened");
         } else {
@@ -651,20 +504,15 @@ function dealGrid(){
         }
       }
       updateGroupsAndValidation();
-    });
-
+    };
     grid.appendChild(cardDiv);
   }
-
-  updateGroupsAndValidation();
 }
 
 createColorPicker();
 dealGrid();
-
-// Select first color button by default
 document.querySelector(".color-button").classList.add("selected-color");
-
+updateGroupsAndValidation();
 </script>
 </body>
 </html>

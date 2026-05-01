@@ -2,172 +2,207 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sammy's Games</title>
-  <header class="topbar">
-    <h1>Step Count</h1>
-    <nav>
-      <a href="index.html">Home</a> |
-      <a href="rps.html">RPS</a> |
-      <a href="knockout.html">Knockout</a> |
-      <a href="knockout_bot.html">Knockout Bot</a> |
-      <a href="five_hands.html">Five Hands</a> |
-      <a href="six_hands.html">Six Hands</a> |
-      <a href="step_count.html">Step Count</a> |
-      <a href="spiral_puzzle.html">Color Spiral</a>
-  
-  </nav>
-  </header>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Step Count - Sammy's Games</title>
   <style>
-    body {
-      font-family: monospace;
+    /* Global Styles (Platform Consistent) */
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background-color: #121212; 
+      color: white; 
+      text-align: center; 
       margin: 0;
-      background: #1a1a2e;
-      color: #eee;
+      padding: 0;
+      min-height: 100vh;
     }
 
-    .page {
+    /* Navigation Bar */
+    nav {
+      background-color: #1e1e1e;
+      padding: 15px;
+      border-bottom: 1px solid #333;
       display: flex;
-      gap: 40px;
-      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
     }
 
+    nav a {
+      color: #aaa;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #007bff;
+    }
+
+    h1 {
+      margin-top: 30px;
+      font-size: 2.5rem;
+      color: #007bff;
+    }
+
+    /* Layout Container */
+    .page-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 40px;
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Game Board */
     .board {
       display: grid;
       grid-template-columns: repeat(7, 70px);
       grid-template-rows: repeat(7, 70px);
-      gap: 4px;
+      gap: 6px;
+      background: #1e1e1e;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #333;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
     .cell {
-      background: #2a2a4a;
-      border: 1px solid #444;
+      background: #252525;
+      border: 1px solid #333;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 26px;
+      font-size: 22px;
+      font-weight: bold;
       cursor: pointer;
-      border-radius: 4px;
-      transition: background 0.12s;
+      border-radius: 8px;
+      transition: all 0.15s ease;
       user-select: none;
-      color: #aaa;
+      color: #666;
     }
 
-    .cell:hover { background: #3a3a5a; }
+    .cell:hover { background: #2d2d2d; border-color: #444; }
 
-    .cell.selected  { background: #c8a800 !important; }
-    .cell.valid     { background: #1a6a8a !important; cursor: pointer; }
-    .cell.path      { background: #3a5a3a !important; }
-    .cell.blocked   { background: #111122 !important; color: #333; cursor: default; border-color: #222; }
+    /* Gameplay States */
+    .cell.selected  { background: #007bff !important; color: white !important; transform: scale(0.95); box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+    .cell.valid     { background: rgba(0, 123, 255, 0.15) !important; border-color: #007bff !important; color: #007bff; }
+    .cell.path      { background: #2e7d32 !important; color: white !important; border-color: #1b5e20; }
+    .cell.blocked   { background: #121212 !important; color: #333; cursor: default; border-color: #222; }
 
-    .x { color: #f87c56; font-size: 30px; }
-    .o { color: #56b4f8; font-size: 30px; }
+    .x { color: #f87c56; text-shadow: 0 0 10px rgba(248, 124, 86, 0.3); }
+    .o { color: #56b4f8; text-shadow: 0 0 10px rgba(86, 180, 248, 0.3); }
 
+    /* Sidebar Info Panel */
     #infoPanel {
-      width: 180px;
+      width: 240px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 16px;
+      text-align: left;
     }
-
-    #turnIndicator { font-size: 20px; font-weight: bold; }
 
     .info-block {
-      background: #2a2a4a;
-      border: 1px solid #444;
-      border-radius: 6px;
-      padding: 12px 14px;
-      font-size: 14px;
-      line-height: 1.8;
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
 
-    .info-block .label { color: #888; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
-    .big-num { font-size: 36px; font-weight: bold; color: #eee; line-height: 1; }
+    .label { 
+      color: #888; 
+      font-size: 11px; 
+      text-transform: uppercase; 
+      letter-spacing: 1.5px; 
+      margin-bottom: 8px;
+      display: block;
+    }
 
+    .big-num { font-size: 32px; font-weight: bold; color: white; line-height: 1; }
+    #turnIndicator { font-size: 20px; font-weight: bold; margin-bottom: 5px; }
+
+    /* Announcement Overlay */
     #announcement {
       position: fixed;
-      top: 30px;
+      top: 100px;
       left: 50%;
       transform: translateX(-50%);
-      background: crimson;
+      background: #dc3545;
       color: white;
-      padding: 15px 30px;
-      font-size: 20px;
+      padding: 15px 40px;
+      font-size: 1.2rem;
       font-weight: bold;
-      border-radius: 8px;
+      border-radius: 50px;
       display: none;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.6);
-      z-index: 10;
+      box-shadow: 0 10px 40px rgba(220, 53, 69, 0.4);
+      z-index: 100;
     }
-    .topbar {
-        width: 100%;
-        background: #111;
-        padding: 10px 0;
-        text-align: center;
-        border-bottom: 1px solid #333;
-        }
 
-        .topbar h1 {
-        margin: 5px 0;
-        }
+    .help-text {
+      font-size: 0.8rem;
+      color: #666;
+      line-height: 1.6;
+      margin-top: 10px;
+    }
 
-        .topbar nav {
-        margin-top: 5px;
-        }
-
-        .topbar a {
-        color: #ccc;
-        text-decoration: none;
-        margin: 0 10px;
-        }
-
-        .topbar a:hover {
-        color: white;
-        }
-        .container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: calc(100vh - 100px);
-        }
   </style>
 </head>
 <body>
 
 <div id="announcement"></div>
-<div class="container">
-<div class="page">
+
+<nav>
+  <a href="index.html">Home</a>
+  <a href="rps.html">RPS</a>
+  <a href="knockout.html">Knockout</a>
+  <a href="knockout_bot.html">Knockout Bot</a>
+  <a href="five_hands.html">Five Hands</a>
+  <a href="six_hands.html">Six Hands</a>
+  <a href="step_count.html">Step Count</a>
+  <a href="spiral_puzzle.html">Color Spiral</a>
+</nav>
+
+<h1>Step Count</h1>
+
+<div class="page-wrapper">
+  
   <div class="board" id="board"></div>
 
   <div id="infoPanel">
-    <div id="turnIndicator">Turn: <span class="x">X</span></div>
+    <div class="info-block">
+      <div id="turnIndicator">Turn: <span class="x">X</span></div>
+    </div>
 
     <div class="info-block">
-      <div class="label">Steps to take</div>
+      <span class="label">Steps to take</span>
       <div class="big-num" id="stepsDisplay">1</div>
     </div>
 
     <div class="info-block">
-      <div class="label">X landed on</div>
-      <div class="big-num x" id="xLastNum">&#8212;</div>
+      <span class="label">X landed on</span>
+      <div class="big-num x" id="xLastNum">—</div>
     </div>
 
     <div class="info-block">
-      <div class="label">O landed on</div>
-      <div class="big-num o" id="oLastNum">&#8212;</div>
+      <span class="label">O landed on</span>
+      <div class="big-num o" id="oLastNum">—</div>
     </div>
 
-    <div class="info-block" style="font-size:12px; color:#888; line-height:1.6;">
-      Click your piece to start. Click adjacent squares to step. Re-click your piece to cancel. Dark squares are blocked.
+    <div class="help-text">
+      <b>How to play:</b> Click your piece to start. Move the required steps. Both the square you started from and the one you end on will become blocked (·). Don't get trapped!
     </div>
   </div>
-</div>
+
 </div>
 
 <script>
 const SIZE = 7;
 const TOTAL = SIZE * SIZE;
 const X_START = 3;
-const O_START = TOTAL - 4; // index 45
+const O_START = TOTAL - 4;
 
 let boardNumbers  = Array(TOTAL).fill(null);
 let boardState    = Array(TOTAL).fill(null);
@@ -199,30 +234,19 @@ for (let i = 0; i < TOTAL; i++) {
   boardEl.appendChild(cell);
 }
 
-updateBoard();
 function canCompletePath(start, steps, visited = new Set()) {
   if (steps === 0) return true;
-
   visited.add(start);
-
   for (const adj of getAdjacent(start)) {
-    if (
-      !visited.has(adj) &&
-      !blocked.has(adj) &&
-      boardState[adj] === null
-    ) {
-      if (canCompletePath(adj, steps - 1, new Set(visited))) {
-        return true;
-      }
+    if (!visited.has(adj) && !blocked.has(adj) && boardState[adj] === null) {
+      if (canCompletePath(adj, steps - 1, new Set(visited))) return true;
     }
   }
-
   return false;
 }
 
 function handleClick(i) {
   if (gameOver) return;
-
   const piece = xturn ? "X" : "O";
 
   if (!moving) {
@@ -236,27 +260,17 @@ function handleClick(i) {
 
   const currentPos = currentPath[currentPath.length - 1];
 
-  // --- Fixed Cancel Logic ---
   if (i === currentPos) {
-  if (currentPath.length > 1) {
-    const startPos = currentPath[0];
-
-    // Reset piece back to start
-    boardState[startPos] = piece;
-    boardState[currentPos] = null;
+    if (currentPath.length > 1) {
+      boardState[currentPath[0]] = piece;
+      boardState[currentPos] = null;
+    }
+    moving = false;
+    currentPath = [];
+    stepsRemaining = xturn ? (lastNumO !== "—" ? parseInt(lastNumO) : 1) : (lastNumX !== "—" ? parseInt(lastNumX) : 1);
+    updateBoard();
+    return;
   }
-
-  moving = false;
-  currentPath = [];
-
-  // Restore correct step count
-  stepsRemaining = xturn
-    ? (lastNumO !== "—" ? parseInt(lastNumO) : 1)
-    : (lastNumX !== "—" ? parseInt(lastNumX) : 1);
-
-  updateBoard();
-  return;
-}
 
   if (!isValidStep(currentPos, i)) return;
 
@@ -266,50 +280,35 @@ function handleClick(i) {
   stepsRemaining--;
 
   if (stepsRemaining === 0) {
-  finishMove(i);
-} else {
-  const stuckFromHere = !getAdjacent(i).some(adj => isValidStep(i, adj));
-
-  if (stuckFromHere) {
-    const startPos = currentPath[0];
-
-    const canMoveFromStart = canCompletePath(startPos, stepsRemaining);
-
-    if (canMoveFromStart) {
-      // Allow reset instead of forcing turn end
-      announce(`${piece} is stuck! Click your piece to reset.`);
-      updateBoard();
-      return;
-    } else {
-      // No moves at all → lose game
-      announce(`${piece} has no moves! ${piece === "X" ? "O" : "X"} wins!`);
-      gameOver = true;
-      updateBoard();
-      return;
-    }
+    finishMove(i);
   } else {
-    updateBoard();
+    const stuckFromHere = !getAdjacent(i).some(adj => isValidStep(i, adj));
+    if (stuckFromHere) {
+      if (canCompletePath(currentPath[0], stepsRemaining + currentPath.length - 1)) {
+         announce(`${piece} is stuck! Click your piece to reset.`);
+      } else {
+        announce(`${piece} has no moves! ${piece === "X" ? "O" : "X"} wins!`);
+        gameOver = true;
+      }
+      updateBoard();
+    } else {
+      updateBoard();
+    }
   }
-}
 }
 
 function finishMove(landedOn) {
-  // Block the original square the player started from this turn
-  if (currentPath.length > 0) {
-    blocked.add(currentPath[0]);
-  }
-  
-  // Block the final landing square
+  if (currentPath.length > 0) blocked.add(currentPath[0]);
   blocked.add(landedOn);
 
   const num = boardNumbers[landedOn];
   const nextSteps = (num !== null) ? num : 1;
 
   if (xturn) {
-    lastNumX = (num !== null) ? String(num) : "—";
+    lastNumX = String(num || 1);
     document.getElementById("xLastNum").textContent = lastNumX;
   } else {
-    lastNumO = (num !== null) ? String(num) : "—";
+    lastNumO = String(num || 1);
     document.getElementById("oLastNum").textContent = lastNumO;
   }
 
@@ -320,77 +319,48 @@ function finishMove(landedOn) {
 
   const nextPiece = xturn ? "X" : "O";
   const nextPos = boardState.indexOf(nextPiece);
-  
-  // Check if player is surrounded/trapped
-  const canMove = canCompletePath(nextPos, stepsRemaining);
-    
-  if (!canMove) {
+  if (!canCompletePath(nextPos, stepsRemaining)) {
     updateBoard();
     announce(`${nextPiece} has no valid moves! ${xturn ? "O" : "X"} wins!`);
     gameOver = true;
     return;
   }
-
   updateBoard();
 }
 
 function isValidStep(from, to) {
   const fromRow = Math.floor(from / SIZE), fromCol = from % SIZE;
   const toRow   = Math.floor(to   / SIZE), toCol   = to   % SIZE;
-  if (Math.abs(fromRow - toRow) + Math.abs(fromCol - toCol) !== 1) return false;
-  if (blocked.has(to))          return false;
-  if (currentPath.includes(to)) return false;
-  if (boardState[to] !== null)  return false;
-  return true;
+  return Math.abs(fromRow - toRow) + Math.abs(fromCol - toCol) === 1 && !blocked.has(to) && !currentPath.includes(to) && boardState[to] === null;
 }
 
 function getAdjacent(i) {
   const row = Math.floor(i / SIZE), col = i % SIZE;
   const adj = [];
-  if (row > 0)        adj.push(i - SIZE);
+  if (row > 0) adj.push(i - SIZE);
   if (row < SIZE - 1) adj.push(i + SIZE);
-  if (col > 0)        adj.push(i - 1);
+  if (col > 0) adj.push(i - 1);
   if (col < SIZE - 1) adj.push(i + 1);
   return adj;
 }
 
 function updateBoard() {
   const currentPos = moving ? currentPath[currentPath.length - 1] : null;
-
   document.querySelectorAll(".cell").forEach((cell, i) => {
     cell.className = "cell";
     cell.innerHTML = "";
+    if (boardState[i] === "X") cell.innerHTML = `<span class="x">X</span>`;
+    else if (boardState[i] === "O") cell.innerHTML = `<span class="o">O</span>`;
+    else if (blocked.has(i)) { cell.classList.add("blocked"); cell.textContent = "·"; }
+    else if (boardNumbers[i] !== null) cell.textContent = boardNumbers[i];
 
-    // 1. Show Pieces (Top Priority)
-    if (boardState[i] === "X") {
-      cell.innerHTML = `<span class="x">X</span>`;
-    } else if (boardState[i] === "O") {
-      cell.innerHTML = `<span class="o">O</span>`;
-    } 
-    // 2. Show Blocked Dots
-    else if (blocked.has(i)) {
-      cell.classList.add("blocked");
-      cell.textContent = "·";
-    } 
-    // 3. Show Numbers
-    else if (boardNumbers[i] !== null) {
-      cell.textContent = boardNumbers[i];
-    }
-
-    // Highlighting
     if (moving) {
-      if (i === currentPos) {
-        cell.classList.add("selected");
-      } else if (currentPath.includes(i) && i !== currentPos) {
-        cell.classList.add("path");
-      } else if (currentPos !== null && isValidStep(currentPos, i)) {
-        cell.classList.add("valid");
-      }
+      if (i === currentPos) cell.classList.add("selected");
+      else if (currentPath.includes(i)) cell.classList.add("path");
+      else if (isValidStep(currentPos, i)) cell.classList.add("valid");
     }
   });
-
-  document.getElementById("turnIndicator").innerHTML =
-    `Turn: <span class="${xturn ? "x" : "o"}">${xturn ? "X" : "O"}</span>`;
+  document.getElementById("turnIndicator").innerHTML = `Turn: <span class="${xturn ? "x" : "o"}">${xturn ? "X" : "O"}</span>`;
   document.getElementById("stepsDisplay").textContent = stepsRemaining;
 }
 
@@ -398,7 +368,10 @@ function announce(msg) {
   const box = document.getElementById("announcement");
   box.textContent = msg;
   box.style.display = "block";
+  if(!gameOver) setTimeout(() => box.style.display = "none", 3000);
 }
+
+updateBoard();
 </script>
 
 </body>

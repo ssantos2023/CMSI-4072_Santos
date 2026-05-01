@@ -1,215 +1,222 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Five Hands</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=IM+Fell+English&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Five Hands - Sammy's Games</title>
+  <style>
+    /* Global Styles (Platform Consistent) */
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background-color: #121212; 
+      color: white; 
+      text-align: center; 
+      margin: 0;
+      padding: 0;
+    }
 
-body {
-  font-family: 'IM Fell English', Georgia, serif;
-  text-align: center;
-  background: #1a3a1a;
-  background-image:
-    radial-gradient(ellipse at 20% 50%, rgba(0,80,0,0.3) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 20%, rgba(0,60,0,0.3) 0%, transparent 60%),
-    repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(0,0,0,0.04) 40px, rgba(0,0,0,0.04) 41px);
-  min-height: 100vh;
-  color: #f0e8d0;
-}
+    /* Navigation Bar */
+    nav {
+      background-color: #1e1e1e;
+      padding: 15px;
+      border-bottom: 1px solid #333;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
 
-h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 3.1rem;
-  color: #f0e8d0;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 0 40px rgba(180,150,60,0.3);
-  padding: 20px 0 4px;
-  letter-spacing: 0.05em;
-}
+    nav a {
+      color: #aaa;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s;
+    }
 
-nav { margin: 8px 0 16px; font-size: 1.05rem; }
-nav a { color: #c9b06a; text-decoration: none; margin: 0 6px; }
-nav a:hover { color: #f0e8d0; text-decoration: underline; }
+    nav a:hover {
+      color: #007bff;
+    }
 
-.layout {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  padding: 10px 20px 30px;
-  align-items: flex-start;
-}
+    h1 {
+      margin-top: 30px;
+      font-size: 2.5rem;
+      color: #007bff;
+    }
 
-.rules-panel, .groups-panel {
-  width: 220px;
-  text-align: left;
-  background: rgba(0,0,0,0.35);
-  border: 1px solid rgba(180,150,60,0.3);
-  border-radius: 12px;
-  padding: 16px;
-  backdrop-filter: blur(4px);
-}
+    /* Layout */
+    .page-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      padding: 20px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
 
-.rules-panel h3, .groups-panel h3 {
-  font-family: 'Playfair Display', serif;
-  color: #c9b06a;
-  font-size: 1.3rem;
-  border-bottom: 1px solid rgba(180,150,60,0.3);
-  padding-bottom: 6px;
-  margin-bottom: 10px;
-}
+    /* Side Panels */
+    .rules-panel, .groups-panel {
+      background-color: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 15px;
+      padding: 25px;
+      width: 280px;
+      text-align: left;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
 
-.rules-panel p {
-  font-size: 0.97rem;
-  line-height: 1.55;
-  color: #d4c9a8;
-  margin-bottom: 8px;
-}
+    .rules-panel h3, .groups-panel h3 {
+      color: #007bff;
+      margin-top: 0;
+      border-bottom: 1px solid #333;
+      padding-bottom: 10px;
+    }
 
-.color-picker {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 14px;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-}
+    .rules-panel p {
+      font-size: 0.9rem;
+      color: #ccc;
+      line-height: 1.5;
+    }
 
-.color-button {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 3px solid rgba(255,255,255,0.3);
-  cursor: pointer;
-  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-}
-.color-button:hover { transform: scale(1.15); }
-.color-button.selected-color {
-  border-color: #fff;
-  transform: scale(1.2);
-  box-shadow: 0 0 0 2px rgba(255,255,255,0.5), 0 4px 12px rgba(0,0,0,0.5);
-}
+    /* Center Game Area */
+    .center-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
 
-.center-area { display: flex; flex-direction: column; align-items: center; }
+    /* Color Picker */
+    .color-picker {
+      display: flex;
+      gap: 12px;
+      background: #1e1e1e;
+      padding: 15px;
+      border-radius: 50px;
+      border: 1px solid #333;
+    }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(5, 78px);
-  grid-template-rows: repeat(5, 110px);
-  gap: 8px;
-}
+    .color-button {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+    }
 
-.card {
-  width: 78px;
-  height: 110px;
-  border-radius: 8px;
-  background: #fdf8f0;
-  border: 1px solid #ccc;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.6);
-  cursor: pointer;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.15s, box-shadow 0.15s, filter 0.2s;
-  user-select: none;
-  overflow: hidden;
-}
-.card:hover {
-  transform: translateY(-4px) scale(1.04);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(255,255,255,0.6);
-  z-index: 2;
-}
+    .color-button.selected-color {
+      border-color: white;
+      transform: scale(1.15);
+    }
 
-.card-corner {
-  position: absolute; top: 4px; left: 5px;
-  display: flex; flex-direction: column; align-items: center; line-height: 1;
-}
-.card-corner-bottom {
-  position: absolute; bottom: 4px; right: 5px;
-  display: flex; flex-direction: column; align-items: center; line-height: 1;
-  transform: rotate(180deg);
-}
-.corner-rank { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; line-height: 1; }
-.corner-suit { font-size: 13px; line-height: 1; }
-.card-center { font-size: 36px; line-height: 1; pointer-events: none; }
+    /* Grid and Cards */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 78px);
+      grid-template-rows: repeat(5, 110px);
+      gap: 10px;
+    }
 
-.card.red-suit .corner-rank, .card.red-suit .corner-suit, .card.red-suit .card-center { color: #cc1111; }
-.card.blue-suit .corner-rank, .card.blue-suit .corner-suit, .card.blue-suit .card-center { color: #1144cc; }
-.card.green-suit .corner-rank, .card.green-suit .corner-suit, .card.green-suit .card-center { color: #117722; }
-.card.black-suit .corner-rank, .card.black-suit .corner-suit, .card.black-suit .card-center { color: #111; }
+    .card {
+      width: 78px;
+      height: 110px;
+      border-radius: 8px;
+      background: #fdf8f0; /* Classic card paper color */
+      border: 1px solid #ccc;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s, box-shadow 0.15s;
+      user-select: none;
+      color: #111; /* Default card text color */
+    }
 
-.card { --highlight-color: transparent; }
-.card::after {
-  content: '';
-  position: absolute; inset: 0;
-  border-radius: 7px;
-  pointer-events: none;
-  background: var(--highlight-color);
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-.card.highlighted::after { opacity: 0.4; }
-.card.joker-card { background: linear-gradient(135deg, #fdf8f0 0%, #ffe0e0 50%, #e0e8ff 100%); }
+    .card:hover {
+      transform: translateY(-5px);
+      z-index: 5;
+    }
 
-.group-dot {
-  display: inline-block;
-  width: 9px; height: 9px;
-  border-radius: 50%;
-  margin-right: 5px;
-  vertical-align: middle;
-  border: 1px solid rgba(255,255,255,0.3);
-}
+    /* Card face styling */
+    .card-corner { position: absolute; top: 4px; left: 5px; display: flex; flex-direction: column; align-items: center; line-height: 1; }
+    .card-corner-bottom { position: absolute; bottom: 4px; right: 5px; display: flex; flex-direction: column; align-items: center; line-height: 1; transform: rotate(180deg); }
+    .corner-rank { font-size: 16px; font-weight: bold; }
+    .corner-suit { font-size: 12px; }
+    .card-center { font-size: 32px; pointer-events: none; }
 
-#groupList { font-size: 0.92rem; line-height: 1.6; color: #d4c9a8; }
-#groupList div { margin-bottom: 2px; }
-.handname { font-style: italic; color: #c9b06a; font-size: 0.88rem; margin-left: 8px; }
+    /* Suit Colors on Card */
+    .card.red-suit { color: #cc1111; }
+    .card.blue-suit { color: #1144cc; }
+    .card.green-suit { color: #117722; }
+    .card.black-suit { color: #111; }
 
-.result { margin-top: 12px; font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: bold; }
-.score { margin-top: 8px; font-size: 0.97rem; color: #c9b06a; line-height: 1.5; }
-</style>
+    /* Highlights */
+    .card.highlighted::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 7px;
+      background: var(--highlight-color);
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    /* Status Display */
+    .group-dot {
+      display: inline-block;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    #groupList { font-size: 0.85rem; color: #ccc; }
+    .handname { font-style: italic; color: #007bff; margin-left: 18px; font-size: 0.8rem; }
+    .result { margin-top: 15px; font-size: 1.2rem; font-weight: bold; }
+    .score-summary { margin-top: 10px; font-size: 0.9rem; color: #888; border-top: 1px solid #333; padding-top: 10px; }
+
+  </style>
 </head>
 <body>
 
-<h1>Five Hands</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="rps.html">RPS</a>
+    <a href="knockout.html">Knockout</a>
+    <a href="knockout_bot.html">Knockout Bot</a>
+    <a href="five_hands.html">Five Hands</a>
+    <a href="six_hands.html">Six Hands</a>
+    <a href="step_count.html">Step Count</a>
+    <a href="spiral_puzzle.html">Color Spiral</a>
+  </nav>
 
-<nav>
-  <a href="index.html">Home</a> |
-  <a href="rps.html">RPS</a> |
-  <a href="knockout.html">Knockout</a> |
-  <a href="knockout_bot.html">Knockout Bot</a> |
-  <a href="five_hands.html">Five Hands</a> |
-  <a href="six_hands.html">Six Hands</a> |
-  <a href="step_count.html">Step Count</a> |
-  <a href="spiral_puzzle.html">Color Spiral</a>
+  <h1>Five Hands</h1>
 
-</nav>
+  <div class="page-wrapper">
 
-<div class="layout">
+    <div class="rules-panel">
+      <h3>Rules</h3>
+      <p>Divide the 5×5 grid into 5 connected groups of 5 using colors.</p>
+      <br>
+      <p>Each group forms a 5-card poker hand. Jokers are wild.</p>
+      <br>
+      <p><strong>Goal:</strong> Make your <u>weakest</u> hand as strong as possible!</p>
+    </div>
 
-  <div class="rules-panel">
-    <h3>Rules</h3>
-    <p>Divide the 5×5 grid of 25 cards into 5 groups of 5 using the colors.</p>
-    <p>Each group must be <strong>orthogonally connected</strong> (no diagonals).</p>
-    <p>Each group forms a 5-card poker hand. Jokers are wild.</p>
-    <p>Goal: make your <strong>weakest hand as strong as possible</strong>.</p>
-    <p>The puzzle changes daily worldwide.</p>
+    <div class="center-area">
+      <div class="color-picker" id="colorPicker"></div>
+      <div class="grid" id="cardGrid"></div>
+    </div>
+
+    <div class="groups-panel">
+      <h3>Your Hands</h3>
+      <div id="groupList"></div>
+      <div id="validationResult" class="result">✗ INVALID</div>
+      <div id="scoreDisplay" class="score-summary"></div>
+    </div>
+
   </div>
-
-  <div class="center-area">
-    <div class="color-picker" id="colorPicker"></div>
-    <div class="grid" id="cardGrid"></div>
-  </div>
-
-  <div class="groups-panel">
-    <h3>Hands</h3>
-    <div id="groupList"></div>
-    <div id="validationResult" class="result">INVALID</div>
-    <div id="scoreDisplay" class="score"></div>
-  </div>
-
-</div>
 
 <script>
 const SUITS = ["s","h","d","c"];
@@ -219,21 +226,19 @@ const SUIT_SYM = { s:"♠", h:"♥", d:"♦", c:"♣" };
 
 const HIGHLIGHT_COLORS = [
   { code:"#FFD700", label:"Yellow" },
-  { code:"#90EE90", label:"Green"  },
-  { code:"#87CEFA", label:"Blue"   },
-  { code:"#FFB6C1", label:"Pink"   },
-  { code:"#4B0082", label:"Purple" }
+  { code:"#00FF00", label:"Green"  },
+  { code:"#007bff", label:"Blue"   },
+  { code:"#FF69B4", label:"Pink"   },
+  { code:"#9370DB", label:"Purple" }
 ];
 
 let currentHighlight = HIGHLIGHT_COLORS[0].code;
 
-/* ── RNG ── */
 function getDailySeed() {
   const d = new Date();
-  const s = d.getUTCFullYear() + "-" + (d.getUTCMonth()+1) + "-" + d.getUTCDate();
-  let h = 0; for (let i = 0; i < s.length; i++) h = h*31 + s.charCodeAt(i);
-  return h;
+  return d.getUTCFullYear() + (d.getUTCMonth()+1) * 100 + d.getUTCDate();
 }
+
 function mulberry32(a) {
   return function() {
     let t = a += 0x6D2B79F5;
@@ -243,13 +248,13 @@ function mulberry32(a) {
   };
 }
 
-/* ── Deck ── */
 function createDeck() {
   const d = [];
   for (const s of SUITS) for (const r of RANKS) d.push(r+s);
   d.push("JOKER","joker");
   return d;
 }
+
 function shuffle(deck, random) {
   for (let i = deck.length-1; i > 0; i--) {
     const j = Math.floor(random()*(i+1));
@@ -257,7 +262,6 @@ function shuffle(deck, random) {
   }
 }
 
-/* ── Hand evaluation ── */
 function compareHands(a,b) { for (let i=0;i<a.length;i++) if (a[i]!==b[i]) return a[i]-b[i]; return 0; }
 
 function scoreHand(hand) {
@@ -277,15 +281,15 @@ function scoreHand(hand) {
     if (JSON.stringify(uniq) === JSON.stringify([2,3,4,5,14])) { straight = true; ord = [5,4,3,2,1]; }
   }
   let sc=1, nm="High Card";
-  if      (straight&&flush&&Math.max(...rv)===14) { sc=10; nm="Royal Flush"; }
-  else if (straight&&flush)                        { sc=9;  nm="Straight Flush"; }
-  else if (vals[0]===4)                            { sc=8;  nm="Four of a Kind"; }
-  else if (vals[0]===3&&vals[1]===2)               { sc=7;  nm="Full House"; }
-  else if (flush)                                  { sc=6;  nm="Flush"; }
-  else if (straight)                               { sc=5;  nm="Straight"; }
-  else if (vals[0]===3)                            { sc=4;  nm="Three of a Kind"; }
-  else if (vals[0]===2&&vals[1]===2)               { sc=3;  nm="Two Pair"; }
-  else if (vals[0]===2)                            { sc=2;  nm="One Pair"; }
+  if (straight&&flush&&Math.max(...rv)===14) { sc=10; nm="Royal Flush"; }
+  else if (straight&&flush) { sc=9; nm="Straight Flush"; }
+  else if (vals[0]===4) { sc=8; nm="Four of a Kind"; }
+  else if (vals[0]===3&&vals[1]===2) { sc=7; nm="Full House"; }
+  else if (flush) { sc=6; nm="Flush"; }
+  else if (straight) { sc=5; nm="Straight"; }
+  else if (vals[0]===3) { sc=4; nm="Three of a Kind"; }
+  else if (vals[0]===2&&vals[1]===2) { sc=3; nm="Two Pair"; }
+  else if (vals[0]===2) { sc=2; nm="One Pair"; }
   return { sc, nm, rankVector:[sc,...ord] };
 }
 
@@ -303,7 +307,6 @@ function evaluateHand(cards) {
   return best;
 }
 
-/* ── Connectivity check (5×5 grid) ── */
 function isConnected(cards, color) {
   const idx = [];
   cards.forEach((c,i) => { if (c.dataset.highlight===color) idx.push(i); });
@@ -322,7 +325,6 @@ function isConnected(cards, color) {
   return vis.size === 5;
 }
 
-/* ── UI update ── */
 function updateGroupsAndValidation() {
   const gl = document.getElementById("groupList");
   const resultDiv = document.getElementById("validationResult");
@@ -340,9 +342,8 @@ function updateGroupsAndValidation() {
         const v = x => (x==="JOKER"||x==="joker") ? 15 : (RANK_VAL[x.slice(0,-1)]||0);
         return v(b)-v(a);
       });
-    const dot = `<span class="group-dot" style="background:${colorObj.code}"></span>`;
     const line = document.createElement("div");
-    line.innerHTML = dot + colorObj.label + ": " + (grp.length ? grp.join(", ") : "—");
+    line.innerHTML = `<span class="group-dot" style="background:${colorObj.code}"></span>` + (grp.length ? grp.join(", ") : "—");
     gl.appendChild(line);
 
     if (grp.length === 5) {
@@ -355,52 +356,45 @@ function updateGroupsAndValidation() {
     }
   });
 
-  const allColored = cards.every(c => c.dataset.highlight);
-  const fiveEach   = HIGHLIGHT_COLORS.every(co => cards.filter(c=>c.dataset.highlight===co.code).length===5);
-  const connected  = HIGHLIGHT_COLORS.every(co => isConnected(cards, co.code));
+  const fiveEach = HIGHLIGHT_COLORS.every(co => cards.filter(c=>c.dataset.highlight===co.code).length===5);
+  const connected = HIGHLIGHT_COLORS.every(co => isConnected(cards, co.code));
 
-  if (allColored && fiveEach && connected && handResults.length===5) {
-    resultDiv.textContent = "✓ VALID"; resultDiv.style.color = "#6ddc6d";
+  if (fiveEach && connected && handResults.length===5) {
+    resultDiv.textContent = "✓ VALID"; resultDiv.style.color = "#28a745";
     const hns = [...document.querySelectorAll(".handname")];
     let lowestHand=null, lowestVec=null;
     hns.forEach(h => {
       const r = handResults[h.dataset.index];
       if (!lowestVec || compareHands(r.rankVector, lowestVec) < 0) { lowestVec=r.rankVector; lowestHand=h; }
     });
-    hns.forEach(h => { h.style.fontWeight="normal"; h.style.color=""; });
     if (lowestHand) {
       const lr = handResults[lowestHand.dataset.index];
-      lowestHand.style.fontWeight = "bold"; lowestHand.style.color = "#ffd700";
-      lowestHand.textContent += " ⭐ Lowest";
-      scoreDisplay.innerHTML = "<b>Score:</b> " + lr.nm + "<br>(" + lr.cards.join(", ") + ")";
+      lowestHand.style.fontWeight = "bold"; lowestHand.style.color = "#FFD700";
+      scoreDisplay.innerHTML = "<strong>Weakest Hand:</strong> " + lr.nm;
     }
   } else {
-    resultDiv.textContent = "✗ INVALID"; resultDiv.style.color = "#ff6b6b";
+    resultDiv.textContent = "✗ INVALID"; resultDiv.style.color = "#dc3545";
   }
 }
 
-/* ── Color picker ── */
 function createColorPicker() {
   const picker = document.getElementById("colorPicker");
   HIGHLIGHT_COLORS.forEach(colorObj => {
     const btn = document.createElement("div");
     btn.className = "color-button";
     btn.style.backgroundColor = colorObj.code;
-    btn.title = colorObj.label;
-    btn.addEventListener("click", () => {
+    btn.onclick = () => {
       currentHighlight = colorObj.code;
       document.querySelectorAll(".color-button").forEach(b => b.classList.remove("selected-color"));
       btn.classList.add("selected-color");
-    });
+    };
     picker.appendChild(btn);
   });
 }
 
-/* ── Deal grid ── */
 function dealGrid() {
   const deck = createDeck();
   shuffle(deck, mulberry32(getDailySeed()));
-
   const grid = document.getElementById("cardGrid");
   grid.innerHTML = "";
 
@@ -408,22 +402,15 @@ function dealGrid() {
     const cardStr = deck[i];
     const isJoker = cardStr==="JOKER"||cardStr==="joker";
     const cardDiv = document.createElement("div");
-    cardDiv.className = "card" + (isJoker ? " joker-card" : "");
+    cardDiv.className = "card" + (isJoker ? " black-suit" : ""); // Visual base
     cardDiv.dataset.cardStr = cardStr;
     cardDiv.dataset.highlight = "";
-    cardDiv.style.setProperty("--highlight-color","transparent");
 
     if (isJoker) {
-      cardDiv.innerHTML = `
-        <div class="card-corner"><span class="corner-rank" style="color:#cc1111;font-size:11px;">JKR</span></div>
-        <div class="card-center" style="font-size:28px;">🃏</div>
-        <div class="card-corner-bottom"><span class="corner-rank" style="color:#1144cc;font-size:11px;">JKR</span></div>`;
+      cardDiv.innerHTML = `<div class="card-center">🃏</div>`;
     } else {
       const suit = cardStr.slice(-1), rank = cardStr.slice(0,-1), sym = SUIT_SYM[suit];
-      let suitClass = "black-suit";
-      if (suit==="h") suitClass="red-suit";
-      else if (suit==="d") suitClass="blue-suit";
-      else if (suit==="c") suitClass="green-suit";
+      const suitClass = (suit==="h") ? "red-suit" : (suit==="d") ? "blue-suit" : (suit==="c") ? "green-suit" : "black-suit";
       cardDiv.classList.add(suitClass);
       cardDiv.innerHTML = `
         <div class="card-corner"><span class="corner-rank">${rank}</span><span class="corner-suit">${sym}</span></div>
@@ -431,9 +418,8 @@ function dealGrid() {
         <div class="card-corner-bottom"><span class="corner-rank">${rank}</span><span class="corner-suit">${sym}</span></div>`;
     }
 
-    cardDiv.addEventListener("click", () => {
+    cardDiv.onclick = () => {
       if (cardDiv.dataset.highlight === currentHighlight) {
-        cardDiv.style.setProperty("--highlight-color","transparent");
         cardDiv.dataset.highlight = "";
         cardDiv.classList.remove("highlighted");
       } else {
@@ -442,16 +428,15 @@ function dealGrid() {
         cardDiv.classList.add("highlighted");
       }
       updateGroupsAndValidation();
-    });
-
+    };
     grid.appendChild(cardDiv);
   }
-  updateGroupsAndValidation();
 }
 
 createColorPicker();
 dealGrid();
 document.querySelector(".color-button").classList.add("selected-color");
+updateGroupsAndValidation();
 </script>
 </body>
 </html>
