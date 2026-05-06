@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number Tic-Tac-Toe - Sammy's Games</title>
+  <style>
+    :root {
+      --primary: #007bff;
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --text: #ffffff;
+      --text-dim: #aaa;
+      --val-1: #00d1b2;
+      --val-2: #ffdd57;
+      --val-3: #ff3860;
+    }
+
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background-color: var(--bg); 
+      color: var(--text); 
+      margin: 0; padding: 0;
+      min-height: 100vh;
+      text-align: center;
+    }
+
+    /* Navigation Bar */
+    nav {
+      background-color: var(--card-bg);
+      padding: 15px;
+      border-bottom: 1px solid #333;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    nav a { color: var(--text-dim); text-decoration: none; font-size: 0.9rem; transition: color 0.3s; }
+    nav a:hover { color: var(--primary); }
+    nav a.active { color: var(--primary); font-weight: bold; }
+
+    h1 { margin-top: 40px; font-size: 2.5rem; color: var(--primary); }
+    .subtitle { color: var(--text-dim); margin-bottom: 30px; }
+
+    /* Layout Containers */
+    .page-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      padding: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .side-panel {
+      background-color: var(--card-bg);
+      border: 1px solid #333;
+      border-radius: 15px;
+      padding: 20px;
+      width: 280px;
+      text-align: left;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+    .dot { height: 8px; width: 8px; background-color: var(--primary); border-radius: 50%; }
+
+    .game-area {
+      background-color: var(--card-bg);
+      border: 1px solid #333;
+      border-radius: 15px;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Board and Cells */
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 12px;
+      background-color: #333;
+      padding: 12px;
+      border-radius: 12px;
+    }
+
+    .cell {
+      background-color: #1e1e1e;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: transform 0.1s, background 0.2s;
+      user-select: none;
+    }
+
+    .cell:hover { background-color: #2a2a2a; }
+    .cell:active { transform: scale(0.92); }
+
+    .val-0 { color: #444; }
+    .val-1 { color: var(--val-1); text-shadow: 0 0 10px rgba(0, 209, 178, 0.2); }
+    .val-2 { color: var(--val-2); text-shadow: 0 0 10px rgba(255, 221, 87, 0.2); }
+    .val-3 { color: var(--val-3); cursor: not-allowed; text-shadow: 0 0 10px rgba(255, 56, 96, 0.2); }
+
+    /* UI Components */
+    .status-block {
+      background: var(--bg);
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--primary);
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.9; }
+
+    .help-text { font-size: 0.85rem; color: var(--text-dim); line-height: 1.4; margin: 0; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="knockout_bot.html">Knockout Bot</a>
+    <a href="boxing.html">Boxing Bot</a>
+    <a href="five_hands.html">Five Hands</a>
+    <a href="six_hands.html">Six Hands</a>
+    <a href="spiral_puzzle.html">Color Spiral</a>
+    <a href="step_count.html">Step Count</a>
+    <a href="numberttt.html" class="active">Number TTT</a>
+    <a href="knockout.html">Knockout (PvP)</a>
+  </nav>
+
+  <h1>Number TTT</h1>
+  <p class="subtitle">A dynamic twist on Tic-Tac-Toe</p>
+
+  <div class="page-wrapper">
+    <div class="side-panel">
+      <div class="section-header"><div class="dot"></div><h3>Game Info</h3></div>
+      <div class="status-block" id="status">Player 1's Turn</div>
+      
+      <p class="help-text">
+        <b>Rules:</b> Players take turns clicking a cell to increment its number. 
+        <br><br>
+        A cell maxes out at <b>3</b>. To win, connect three of the <b>same number</b> (1s, 2s, or 3s) in a row.
+      </p>
+
+      <button class="btn" id="restart">Restart Game</button>
+    </div>
+
+    <div class="game-area">
+      <div class="board" id="board">
+        <div class="cell val-0" data-index="0">0</div>
+        <div class="cell val-0" data-index="1">0</div>
+        <div class="cell val-0" data-index="2">0</div>
+        <div class="cell val-0" data-index="3">0</div>
+        <div class="cell val-0" data-index="4">0</div>
+        <div class="cell val-0" data-index="5">0</div>
+        <div class="cell val-0" data-index="6">0</div>
+        <div class="cell val-0" data-index="7">0</div>
+        <div class="cell val-0" data-index="8">0</div>
+      </div>
+    </div>
+  </div>
+
+<script>
+    const statusDisplay = document.getElementById('status');
+    const cells = document.querySelectorAll('.cell');
+    const restartBtn = document.getElementById('restart');
+
+    let gameActive = true;
+    let currentPlayer = 1;
+    let gameState = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+    const winningConditions = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6]
+    ];
+
+    function handleCellClick(clickedCellEvent) {
+        const clickedCell = clickedCellEvent.target;
+        const clickedIndex = parseInt(clickedCell.getAttribute('data-index'));
+
+        if (gameState[clickedIndex] >= 3 || !gameActive) return;
+
+        gameState[clickedIndex]++;
+        updateUI(clickedCell, clickedIndex);
+        handleResultValidation();
+    }
+
+    function updateUI(cell, index) {
+        const val = gameState[index];
+        cell.innerText = val;
+        cell.className = `cell val-${val}`;
+    }
+
+    function handleResultValidation() {
+        let roundWon = false;
+        let winningValue = 0;
+
+        for (let i = 0; i < winningConditions.length; i++) {
+            const winCondition = winningConditions[i];
+            let a = gameState[winCondition[0]];
+            let b = gameState[winCondition[1]];
+            let c = gameState[winCondition[2]];
+
+            if (a === 0 || b === 0 || c === 0) continue;
+            
+            if (a === b && b === c) {
+                roundWon = true;
+                winningValue = a;
+                break;
+            }
+        }
+
+        if (roundWon) {
+            statusDisplay.innerHTML = `P${currentPlayer} Wins! (${winningValue}s)`;
+            statusDisplay.style.color = "var(--val-1)";
+            gameActive = false;
+            return;
+        }
+
+        const isDraw = !gameState.includes(0) && !gameState.includes(1) && !gameState.includes(2);
+        if (isDraw) {
+            statusDisplay.innerHTML = "Draw Game!";
+            gameActive = false;
+            return;
+        }
+
+        currentPlayer = currentPlayer === 1 ? 2 : 1;
+        statusDisplay.innerHTML = `Player ${currentPlayer}'s Turn`;
+    }
+
+    function restartGame() {
+        gameActive = true;
+        currentPlayer = 1;
+        gameState = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        statusDisplay.innerHTML = "Player 1's Turn";
+        statusDisplay.style.color = "var(--text)";
+        cells.forEach(cell => {
+            cell.innerText = "0";
+            cell.className = "cell val-0";
+        });
+    }
+
+    cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+    restartBtn.addEventListener('click', restartGame);
+</script>
+
+</body>
+</html>

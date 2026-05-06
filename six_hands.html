@@ -5,25 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Six Hands - Sammy's Games</title>
   <style>
-    /* Global Styles (Platform Consistent) */
+    :root {
+      --primary: #007bff;
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --text: #ffffff;
+      --text-dim: #aaa;
+      --nav-bg: #1e1e1e;
+    }
+
     body { 
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-      background-color: #121212; 
-      color: white; 
-      text-align: center; 
+      background-color: var(--bg); 
+      color: var(--text); 
       margin: 0;
       padding: 0;
+      min-height: 100vh;
+      line-height: 1.6;
     }
 
     /* Navigation Bar */
     nav {
-      background-color: #1e1e1e;
+      background-color: var(--nav-bg);
       padding: 15px;
       border-bottom: 1px solid #333;
       display: flex;
       justify-content: center;
       gap: 15px;
       flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
 
     nav a {
@@ -33,21 +45,30 @@
       transition: color 0.3s;
     }
 
-    nav a:hover {
-      color: #007bff;
-    }
+    nav a:hover { color: var(--primary); }
+    nav a.active { color: var(--primary); font-weight: bold; }
 
     h1 {
-      margin-top: 30px;
+      margin-top: 40px;
       font-size: 2.5rem;
-      color: #007bff;
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 5px;
     }
 
-    /* Layout */
+    .subtitle {
+      text-align: center;
+      color: var(--text-dim);
+      margin-bottom: 30px;
+      font-size: 1rem;
+    }
+
+    /* Layout Container */
     .page-wrapper {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
+      align-items: flex-start;
       gap: 30px;
       padding: 20px;
       max-width: 1400px;
@@ -55,55 +76,63 @@
     }
 
     /* Side Panels */
-    .rules-panel, .groups-panel {
-      background-color: #1e1e1e;
+    .side-panel {
+      background-color: var(--card-bg);
       border: 1px solid #333;
       border-radius: 15px;
-      padding: 25px;
+      padding: 20px;
       width: 280px;
       text-align: left;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
 
-    .rules-panel h3, .groups-panel h3 {
-      color: #007bff;
-      margin-top: 0;
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
       border-bottom: 1px solid #333;
       padding-bottom: 10px;
     }
 
-    .rules-panel p {
-      font-size: 0.9rem;
-      color: #ccc;
-      line-height: 1.5;
+    .dot {
+      height: 8px;
+      width: 8px;
+      background-color: var(--primary);
+      border-radius: 50%;
     }
 
-    /* Center Game Area */
-    .center-area {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
+    .side-panel h3 {
+      color: var(--text);
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .side-panel p {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.5;
     }
 
     /* Color Picker */
     .color-picker {
       display: flex;
-      gap: 10px;
-      background: #1e1e1e;
-      padding: 12px 20px;
+      gap: 12px;
+      background: var(--card-bg);
+      padding: 15px;
       border-radius: 50px;
       border: 1px solid #333;
-      align-items: center;
+      margin-bottom: 20px;
     }
 
     .color-button {
-      width: 32px;
-      height: 32px;
+      width: 35px;
+      height: 35px;
       border-radius: 50%;
       border: 3px solid transparent;
       cursor: pointer;
-      transition: transform 0.2s, border-color 0.2s;
+      transition: transform 0.2s;
     }
 
     .color-button.selected-color {
@@ -111,23 +140,25 @@
       transform: scale(1.15);
     }
 
-    /* Star Mode Button specific styling */
     .star-btn {
       background-color: #333;
-      border-color: rgba(255, 215, 0, 0.4);
       display: flex;
       align-items: center;
       justify-content: center;
       color: #ffd700;
       font-weight: bold;
+      font-size: 1.2rem;
     }
 
     /* Grid and Cards */
     .grid {
       display: grid;
       grid-template-columns: repeat(6, 78px);
-      grid-template-rows: repeat(5, 110px);
-      gap: 8px;
+      gap: 10px;
+      background: var(--card-bg);
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid #333;
     }
 
     .card {
@@ -146,25 +177,19 @@
       color: #111;
     }
 
-    .card:hover {
-      transform: translateY(-5px);
-      z-index: 5;
-    }
+    .card:hover { transform: translateY(-5px); z-index: 5; }
 
-    /* Card face styling */
     .card-corner { position: absolute; top: 4px; left: 5px; display: flex; flex-direction: column; align-items: center; line-height: 1; }
     .card-corner-bottom { position: absolute; bottom: 4px; right: 5px; display: flex; flex-direction: column; align-items: center; line-height: 1; transform: rotate(180deg); }
     .corner-rank { font-size: 16px; font-weight: bold; }
-    .corner-suit { font-size: 11px; }
+    .corner-suit { font-size: 12px; }
     .card-center { font-size: 32px; pointer-events: none; }
 
-    /* Suit Colors on Card */
     .card.red-suit { color: #cc1111; }
     .card.blue-suit { color: #1144cc; }
     .card.green-suit { color: #117722; }
     .card.black-suit { color: #111; }
 
-    /* Highlights */
     .card.highlighted::after {
       content: '';
       position: absolute;
@@ -175,10 +200,7 @@
       pointer-events: none;
     }
 
-    /* Darkened (Star mode) */
-    .card.darkened {
-      filter: brightness(60%) saturate(60%);
-    }
+    .card.darkened { filter: brightness(60%) saturate(60%); }
     .card.darkened::before {
       content: '★';
       position: absolute;
@@ -188,18 +210,26 @@
       text-shadow: 0 0 5px black;
     }
 
-    /* Status Display */
-    .group-dot {
-      display: inline-block;
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      margin-right: 8px;
-    }
-
-    #groupList { font-size: 0.85rem; color: #ccc; line-height: 1.6; }
-    .handname { font-style: italic; color: #007bff; margin-left: 18px; font-size: 0.8rem; }
-    .result { margin-top: 15px; font-size: 1.2rem; font-weight: bold; }
+    /* UI Elements */
+    #groupList { font-size: 0.85rem; color: var(--text-dim); }
+    .handname { font-style: italic; color: var(--primary); margin-left: 18px; font-size: 0.8rem; margin-bottom: 5px; }
+    .result { margin-top: 15px; font-size: 1.2rem; font-weight: bold; text-align: center; }
     .score-summary { margin-top: 10px; font-size: 0.9rem; color: #888; border-top: 1px solid #333; padding-top: 10px; line-height: 1.4; }
+    .group-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; }
+
+    #copy-log-btn {
+      margin-top: 15px;
+      width: 100%;
+      padding: 10px;
+      background: var(--primary);
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    #copy-log-btn:hover { background: #0056b3; }
 
   </style>
 </head>
@@ -207,181 +237,244 @@
 
   <nav>
     <a href="index.html">Home</a>
-    <a href="rps.html">RPS</a>
-    <a href="knockout.html">Knockout</a>
     <a href="knockout_bot.html">Knockout Bot</a>
+    <a href="boxing.html">Boxing Bot</a>
     <a href="five_hands.html">Five Hands</a>
-    <a href="six_hands.html">Six Hands</a>
-    <a href="step_count.html">Step Count</a>
+    <a href="six_hands.html" class="active">Six Hands</a>
     <a href="spiral_puzzle.html">Color Spiral</a>
+    <a href="step_count.html">Step Count</a>
+    <a href="numberttt.html">Number TTT</a>
+    <a href="knockout.html">Knockout (PvP)</a>
   </nav>
 
   <h1>Six Hands</h1>
+  <p class="subtitle">Five hands but bigger.</p>
 
   <div class="page-wrapper">
-
-    <div class="rules-panel">
-      <h3>Rules</h3>
-      <p>1. Form 5 connected groups of 6 cards using the colors.</p>
-      <p>2. Star exactly one card (★) from each color group to form your 6th hand.</p>
-      <br>
-      <p><strong>Goal:</strong> Your <u>weakest</u> hand must be as strong as possible.</p>
+    <div class="side-panel">
+      <div class="section-header">
+        <div class="dot"></div>
+        <h3>Rules</h3>
+      </div>
+      <p>1. Form 5 connected groups of 6 cards using colors.</p>
+      <p>2. Star (★) exactly one card from each color group to form your 6th hand.</p>
+      <p><b>Goal:</b> Make your <u>weakest</u> hand as strong as possible!</p>
+      <p style="font-size: 0.75rem; border-top: 1px solid #333; padding-top: 10px;">Grid resets daily at midnight UTC.</p>
     </div>
 
-    <div class="center-area">
+    <div class="center-area" style="display: flex; flex-direction: column; align-items: center;">
       <div class="color-picker" id="colorPicker"></div>
       <div class="grid" id="cardGrid"></div>
+      <div id="validationResult" class="result" style="color: #dc3545;">✗ INVALID</div>
     </div>
 
-    <div class="groups-panel">
-      <h3>Your Hands</h3>
+    <div class="side-panel">
+      <div class="section-header">
+        <div class="dot"></div>
+        <h3>Your Hands</h3>
+      </div>
       <div id="groupList"></div>
-      <div id="validationResult" class="result">✗ INVALID</div>
       <div id="scoreDisplay" class="score-summary"></div>
+      <button id="copy-log-btn" style="display: none;">Share Results</button>
     </div>
-
   </div>
 
 <script>
-const suits=["s","h","d","c"];
-const ranks=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
-const rankValue={"A":14,"K":13,"Q":12,"J":11,"10":10,"9":9,"8":8,"7":7,"6":6,"5":5,"4":4,"3":3,"2":2};
-const suitSymbol={ "s":"♠","h":"♥","d":"♦","c":"♣" };
+const suits = ["s","h","d","c"];
+const ranks = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+const rankValue = {"A":14,"K":13,"Q":12,"J":11,"10":10,"9":9,"8":8,"7":7,"6":6,"5":5,"4":4,"3":3,"2":2};
+const suitSymbol = { "s":"♠","h":"♥","d":"♦","c":"♣" };
 
-const highlightColors=[
-  {code:"#FFD700",label:"Yellow"},
-  {code:"#00FF00",label:"Green"},
-  {code:"#007bff",label:"Blue"},
-  {code:"#FF69B4",label:"Pink"},
-  {code:"#9370DB",label:"Purple"}
+const highlightColors = [
+  {code:"#FFD700", label:"Yellow"},
+  {code:"#00FF00", label:"Green"},
+  {code:"#007bff", label:"Blue"},
+  {code:"#FF69B4", label:"Pink"},
+  {code:"#9370DB", label:"Purple"}
 ];
 
-const blackMode="#000000";
-let currentHighlight=highlightColors[0].code;
+const blackMode = "#000000";
+let currentHighlight = highlightColors[0].code;
 
-function compareHands(a,b){ for(let i=0;i<a.length;i++) if(a[i]!==b[i]) return a[i]-b[i]; return 0; }
+function compareHands(a,b) { for(let i=0;i<a.length;i++) if(a[i]!==b[i]) return a[i]-b[i]; return 0; }
 
-function getDailySeed(){
-  const today=new Date();
-  return today.getUTCFullYear() + (today.getUTCMonth()+1) * 100 + today.getUTCDate();
+function getDailySeed() {
+  const d = new Date();
+  return d.getUTCFullYear() + (d.getUTCMonth()+1) * 100 + d.getUTCDate();
 }
 
-function mulberry32(a){
-  return function(){
-    let t=a+=0x6D2B79F5;
-    t=Math.imul(t^t>>>15,t|1);
-    t^=t+Math.imul(t^t>>>7,t|61);
-    return((t^t>>>14)>>>0)/4294967296;
+function mulberry32(a) {
+  return function() {
+    let t = a += 0x6D2B79F5;
+    t = Math.imul(t ^ t>>>15, t|1);
+    t ^= t + Math.imul(t ^ t>>>7, t|61);
+    return ((t ^ t>>>14) >>> 0) / 4294967296;
   }
 }
 
-function createDeck(){
-  const deck=[];
-  for(let suit of suits) for(let rank of ranks) deck.push(rank+suit);
+function createDeck() {
+  const deck = [];
+  for(let s of suits) for(let r of ranks) deck.push(r+s);
   deck.push("JOKER","joker");
   return deck;
 }
 
-function shuffle(deck,random){
-  for(let i=deck.length-1;i>0;i--){
-    const j=Math.floor(random()*(i+1));
-    [deck[i],deck[j]]=[deck[j],deck[i]];
+function shuffle(deck, random) {
+  for(let i=deck.length-1; i>0; i--) {
+    const j = Math.floor(random()*(i+1));
+    [deck[i],deck[j]] = [deck[j],deck[i]];
   }
 }
 
-function evaluateHand(cards){
-  const deck=createDeck();
-  function scoreHand(hand){
-    const ranksArr=[], suitsArr=[];
-    hand.forEach(c=>{ ranksArr.push(rankValue[c.slice(0,-1)]); suitsArr.push(c.slice(-1)); });
-    ranksArr.sort((a,b)=>b-a);
-    const counts={};
-    ranksArr.forEach(r=>counts[r]=(counts[r]||0)+1);
-    const groups=Object.entries(counts).map(([r,c])=>({rank:parseInt(r),count:c})).sort((a,b)=>b.count!==a.count?b.count-a.count:b.rank-a.rank);
-    const values=groups.map(g=>g.count);
-    let orderedRanks=groups.flatMap(g=>Array(g.count).fill(g.rank));
-    const flush=new Set(suitsArr).size===1;
-    let straight=false;
-    let unique=[...new Set(ranksArr)].sort((a,b)=>a-b);
-    if(unique.length===5){
-      straight=true;
-      for(let i=1;i<unique.length;i++) if(unique[i]!==unique[i-1]+1) straight=false;
-      if(JSON.stringify(unique)===JSON.stringify([2,3,4,5,14])){ straight=true; orderedRanks=[5,4,3,2,1]; }
+function evaluateHand(cards) {
+  const deck = createDeck();
+
+  function scoreHand(hand) {
+    const rv = [], sv = [];
+
+    hand.forEach(c => {
+      rv.push(rankValue[c.slice(0,-1)]);
+      sv.push(c.slice(-1));
+    });
+
+    rv.sort((a,b) => b-a);
+
+    const cnt = {};
+    rv.forEach(r => cnt[r] = (cnt[r] || 0) + 1);
+
+    const grps = Object.entries(cnt)
+      .map(([r,c]) => ({r:+r,c}))
+      .sort((a,b) => b.c !== a.c ? b.c - a.c : b.r - a.r);
+
+    const vals = grps.map(g => g.c);
+    let ord = grps.flatMap(g => Array(g.c).fill(g.r));
+
+    const flush = new Set(sv).size === 1;
+
+    let straight = false;
+    let uniq = [...new Set(rv)].sort((a,b)=>a-b);
+
+    if(uniq.length === 5) {
+      straight = true;
+
+      for(let i=1; i<uniq.length; i++) {
+        if(uniq[i] !== uniq[i-1] + 1) straight = false;
+      }
+
+      if(JSON.stringify(uniq) === JSON.stringify([2,3,4,5,14])) {
+        straight = true;
+        ord = [5,4,3,2,1];
+      }
     }
-    let score=1, name="High Card";
-    if(straight&&flush&&Math.max(...ranksArr)===14){score=10;name="Royal Flush";}
-    else if(straight&&flush){score=9;name="Straight Flush";}
-    else if(values[0]===4){score=8;name="Four of a Kind";}
-    else if(values[0]===3&&values[1]===2){score=7;name="Full House";}
-    else if(flush){score=6;name="Flush";}
-    else if(straight){score=5;name="Straight";}
-    else if(values[0]===3){score=4;name="Three of a Kind";}
-    else if(values[0]===2&&values[1]===2){score=3;name="Two Pair";}
-    else if(values[0]===2){score=2;name="Pair";}
-    return {score,name,rankVector:[score,...orderedRanks]};
+
+    let sc = 1;
+    let nm = "High Card";
+
+    if(straight && flush && Math.max(...rv) === 14) {
+      sc = 10; nm = "Royal Flush";
+    }
+    else if(straight && flush) {
+      sc = 9; nm = "Straight Flush";
+    }
+    else if(vals[0] === 4) {
+      sc = 8; nm = "Four of a Kind";
+    }
+    else if(vals[0] === 3 && vals[1] === 2) {
+      sc = 7; nm = "Full House";
+    }
+    else if(flush) {
+      sc = 6; nm = "Flush";
+    }
+    else if(straight) {
+      sc = 5; nm = "Straight";
+    }
+    else if(vals[0] === 3) {
+      sc = 4; nm = "Three of a Kind";
+    }
+    else if(vals[0] === 2 && vals[1] === 2) {
+      sc = 3; nm = "Two Pair";
+    }
+    else if(vals[0] === 2) {
+      sc = 2; nm = "Pair";
+    }
+
+    return {
+      sc,
+      name: nm,
+      rankVector: [sc, ...ord]
+    };
   }
-  const jokerIndex=cards.findIndex(c=>c.toLowerCase().includes("joker"));
-  if(jokerIndex===-1) return scoreHand(cards);
-  let best=null;
-  for(let candidate of deck){
-    if(cards.includes(candidate)) continue;
-    const test=[...cards]; test[jokerIndex]=candidate;
-    const result=scoreHand(test);
-    if(!best||compareHands(result.rankVector,best.rankVector)>0) best=result;
+
+  const ji = cards.findIndex(c => c.toLowerCase().includes("joker"));
+
+  if(ji === -1) return scoreHand(cards);
+
+  let best = null;
+
+  for(let cand of deck) {
+    if(cards.includes(cand)) continue;
+
+    const t = [...cards];
+    t[ji] = cand;
+
+    const r = scoreHand(t);
+
+    if(!best || compareHands(r.rankVector, best.rankVector) > 0) {
+      best = r;
+    }
   }
+
   return best;
 }
 
-function createColorPicker(){
-  const picker=document.getElementById("colorPicker");
-  highlightColors.forEach(colorObj=>{
-    const button=document.createElement("div");
-    button.className="color-button";
-    button.style.backgroundColor=colorObj.code;
-    button.onclick=()=>{
-      currentHighlight=colorObj.code;
-      document.querySelectorAll(".color-button").forEach(b=>b.classList.remove("selected-color"));
-      button.classList.add("selected-color");
+function createColorPicker() {
+  const picker = document.getElementById("colorPicker");
+  highlightColors.forEach(colorObj => {
+    const btn = document.createElement("div");
+    btn.className = "color-button";
+    btn.style.backgroundColor = colorObj.code;
+    btn.onclick = () => {
+      currentHighlight = colorObj.code;
+      document.querySelectorAll(".color-button").forEach(b => b.classList.remove("selected-color"));
+      btn.classList.add("selected-color");
     };
-    picker.appendChild(button);
+    picker.appendChild(btn);
   });
-
-  const blackButton=document.createElement("div");
-  blackButton.className="color-button star-btn";
-  blackButton.innerHTML='★';
-  blackButton.onclick=()=>{
-    currentHighlight=blackMode;
-    document.querySelectorAll(".color-button").forEach(b=>b.classList.remove("selected-color"));
-    blackButton.classList.add("selected-color");
+  const blackBtn = document.createElement("div");
+  blackBtn.className = "color-button star-btn";
+  blackBtn.innerHTML = '★';
+  blackBtn.onclick = () => {
+    currentHighlight = blackMode;
+    document.querySelectorAll(".color-button").forEach(b => b.classList.remove("selected-color"));
+    blackBtn.classList.add("selected-color");
   };
-  picker.appendChild(blackButton);
+  picker.appendChild(blackBtn);
 }
 
-function isConnected(cards,color){
-  const indices=[];
-  cards.forEach((card,i)=>{ if(card.dataset.highlight===color) indices.push(i); });
-  if(indices.length!==6) return false;
-  const visited=new Set(), stack=[indices[0]];
-  while(stack.length){
-    const i=stack.pop();
-    if(visited.has(i)) continue;
-    visited.add(i);
-    const r=Math.floor(i/6), c=i%6;
-    [[r-1,c],[r+1,c],[r,c-1],[r,c+1]].forEach(([nr,nc])=>{
-      if(nr>=0&&nr<5&&nc>=0&&nc<6){
-        const ni=nr*6+nc;
-        if(cards[ni].dataset.highlight===color&&!visited.has(ni)) stack.push(ni);
+function isConnected(cards, color) {
+  const idx = [];
+  cards.forEach((c, i) => { if(c.dataset.highlight === color) idx.push(i); });
+  if(idx.length !== 6) return false;
+  const vis = new Set(), stk = [idx[0]];
+  while(stk.length) {
+    const i = stk.pop(); if(vis.has(i)) continue; vis.add(i);
+    const r = Math.floor(i/6), c = i%6;
+    [[r-1,c],[r+1,c],[r,c-1],[r,c+1]].forEach(([nr,nc]) => {
+      if(nr>=0&&nr<5&&nc>=0&&nc<6) {
+        const ni = nr*6+nc;
+        if(cards[ni].dataset.highlight === color && !vis.has(ni)) stk.push(ni);
       }
     });
   }
-  return visited.size===6;
+  return vis.size === 6;
 }
 
 function updateGroupsAndValidation() {
-  const groupList = document.getElementById("groupList");
+  const gl = document.getElementById("groupList");
   const resultDiv = document.getElementById("validationResult");
   const scoreDisplay = document.getElementById("scoreDisplay");
-  groupList.innerHTML = ""; scoreDisplay.textContent = "";
+  const shareBtn = document.getElementById('copy-log-btn');
+  gl.innerHTML = ""; scoreDisplay.textContent = "";
 
   const cards = Array.from(document.querySelectorAll(".card"));
   const counts = {}, darkCounts = {};
@@ -389,8 +482,6 @@ function updateGroupsAndValidation() {
 
   const darkCards = [];
   const handResults = [];
-
-  // Helper function to sort cards by rank value
   const sortByRank = (a, b) => {
     const v = x => x.toLowerCase().includes("joker") ? 15 : (rankValue[x.slice(0, -1)] || 0);
     return v(b) - v(a);
@@ -407,110 +498,103 @@ function updateGroupsAndValidation() {
   });
 
   highlightColors.forEach(colorObj => {
-    // Filter and then SORT by rank
     const visibleCards = cards
-      .filter(card => card.dataset.highlight === colorObj.code && !card.classList.contains("darkened"))
-      .map(card => card.dataset.cardStr)
+      .filter(c => c.dataset.highlight === colorObj.code && !c.classList.contains("darkened"))
+      .map(c => c.dataset.cardStr)
       .sort(sortByRank);
 
     const line = document.createElement("div");
     line.innerHTML = `<span class="group-dot" style="background:${colorObj.code}"></span>` + (visibleCards.length ? visibleCards.join(", ") : "—");
-    groupList.appendChild(line);
+    gl.appendChild(line);
 
     if (visibleCards.length === 5) {
-      const result = evaluateHand(visibleCards);
-      result.cards = visibleCards; // These are now sorted
-      handResults.push(result);
-      const hand = document.createElement("div");
-      hand.className = "handname";
-      hand.dataset.index = handResults.length - 1;
-      hand.textContent = "→ " + result.name;
-      groupList.appendChild(hand);
+      const res = evaluateHand(visibleCards); res.cards = visibleCards;
+      handResults.push(res);
+      const hnd = document.createElement("div");
+      hnd.className = "handname"; hnd.dataset.index = handResults.length - 1;
+      hnd.textContent = "→ " + res.name;
+      gl.appendChild(hnd);
     }
   });
 
-  // Sort the dark (Sixth) hand as well
   darkCards.sort(sortByRank);
-
   if (darkCards.length > 0) {
-    const darkLine = document.createElement("div");
-    darkLine.style.marginTop = "10px";
-    darkLine.innerHTML = `<span class="group-dot" style="background:#ffd700"></span>Sixth/Star: ` + darkCards.join(", ");
-    groupList.appendChild(darkLine);
+    const dLine = document.createElement("div");
+    dLine.style.marginTop = "10px";
+    dLine.innerHTML = `<span class="group-dot" style="background:#ffd700"></span>Sixth Hand: ` + darkCards.join(", ");
+    gl.appendChild(dLine);
   }
 
   if (darkCards.length === 5) {
-    const result = evaluateHand(darkCards);
-    result.cards = darkCards;
-    handResults.push(result);
-    const hand = document.createElement("div");
-    hand.className = "handname";
-    hand.dataset.index = handResults.length - 1;
-    hand.textContent = "→ " + result.name;
-    groupList.appendChild(hand);
+    const res = evaluateHand(darkCards); res.cards = darkCards;
+    handResults.push(res);
+    const hnd = document.createElement("div");
+    hnd.className = "handname"; hnd.dataset.index = handResults.length - 1;
+    hnd.textContent = "→ " + res.name;
+    gl.appendChild(hnd);
   }
 
-  const allColored = cards.every(card => card.dataset.highlight);
+  const allColored = cards.every(c => c.dataset.highlight);
   const sixPerColor = highlightColors.every(c => counts[c.code] === 6);
   const oneDarkEach = highlightColors.every(c => darkCounts[c.code] === 1);
-  const connectedGroups = highlightColors.every(c => isConnected(cards, c.code));
+  const connected = highlightColors.every(c => isConnected(cards, c.code));
 
-  if (allColored && sixPerColor && oneDarkEach && connectedGroups && handResults.length === 6) {
+  if (allColored && sixPerColor && oneDarkEach && connected && handResults.length === 6) {
     resultDiv.textContent = "✓ VALID"; resultDiv.style.color = "#28a745";
+    shareBtn.style.display = "block";
     const hands = [...document.querySelectorAll(".handname")];
-    let lowestHand = null, lowestVector = null;
+    let lowH = null, lowV = null;
     hands.forEach(h => {
-      const result = handResults[h.dataset.index];
-      if (!lowestVector || compareHands(result.rankVector, lowestVector) < 0) {
-        lowestVector = result.rankVector; lowestHand = h;
-      }
+      const res = handResults[h.dataset.index];
+      if (!lowV || compareHands(res.rankVector, lowV) < 0) { lowV = res.rankVector; lowH = h; }
     });
-    if (lowestHand) {
-      const lr = handResults[lowestHand.dataset.index];
-      lowestHand.style.fontWeight = "bold"; lowestHand.style.color = "#ffd700";
+    if (lowH) {
+      const lr = handResults[lowH.dataset.index];
+      lowH.style.fontWeight = "bold"; lowH.style.color = "#ffd700";
       scoreDisplay.innerHTML = `<strong>Score:</strong> ${lr.name}<br><span style="color:#eee; font-size:0.8rem;">${lr.cards.join(", ")}</span>`;
     }
   } else {
     resultDiv.textContent = "✗ INVALID"; resultDiv.style.color = "#dc3545";
+    shareBtn.style.display = "none";
   }
 }
-function dealGrid(){
-  const deck=createDeck();
-  const random=mulberry32(getDailySeed());
-  shuffle(deck,random);
-  const grid=document.getElementById("cardGrid");
-  grid.innerHTML="";
 
-  for(let i=0;i<30;i++){
-    const cardStr=deck[i];
-    const cardDiv=document.createElement("div");
-    cardDiv.className="card";
-    cardDiv.dataset.cardStr=cardStr;
-    cardDiv.dataset.highlight="";
+function dealGrid() {
+  const deck = createDeck();
+  shuffle(deck, mulberry32(getDailySeed()));
+  const grid = document.getElementById("cardGrid");
+  grid.innerHTML = "";
 
-    const isJoker=cardStr.toLowerCase().includes("joker");
-    if(isJoker){
-      cardDiv.innerHTML=`<div class="card-center">🃏</div>`;
+  for(let i=0; i<30; i++) {
+    const cardStr = deck[i];
+    const cardDiv = document.createElement("div");
+    cardDiv.className = "card";
+    cardDiv.dataset.cardStr = cardStr;
+    cardDiv.dataset.highlight = "";
+
+    const isJoker = cardStr.toLowerCase().includes("joker");
+    if(isJoker) {
+      cardDiv.innerHTML = `<div class="card-center">🃏</div>`;
     } else {
-      const suit=cardStr.slice(-1), rank=cardStr.slice(0,-1), sym=suitSymbol[suit];
-      const suitClass=(suit==="h")?"red-suit":(suit==="d")?"blue-suit":(suit==="c")?"green-suit":"black-suit";
+      const suit = cardStr.slice(-1), rank = cardStr.slice(0,-1), sym = suitSymbol[suit];
+      const suitClass = (suit==="h")?"red-suit":(suit==="d")?"blue-suit":(suit==="c")?"green-suit":"black-suit";
       cardDiv.classList.add(suitClass);
-      cardDiv.innerHTML=`
+      cardDiv.innerHTML = `
         <div class="card-corner"><span class="corner-rank">${rank}</span><span class="corner-suit">${sym}</span></div>
         <div class="card-center">${sym}</div>
         <div class="card-corner-bottom"><span class="corner-rank">${rank}</span><span class="corner-suit">${sym}</span></div>`;
     }
 
-    cardDiv.onclick=()=>{
-      if(currentHighlight===blackMode){
+    cardDiv.onclick = () => {
+      if(currentHighlight === blackMode) {
         if(cardDiv.dataset.highlight) cardDiv.classList.toggle("darkened");
       } else {
-        if(cardDiv.dataset.highlight===currentHighlight){
-          cardDiv.dataset.highlight="";
+        if(cardDiv.dataset.highlight === currentHighlight) {
+          cardDiv.dataset.highlight = "";
           cardDiv.classList.remove("highlighted","darkened");
         } else {
-          cardDiv.style.setProperty("--highlight-color",currentHighlight);
-          cardDiv.dataset.highlight=currentHighlight;
+          cardDiv.style.setProperty("--highlight-color", currentHighlight);
+          cardDiv.dataset.highlight = currentHighlight;
           cardDiv.classList.add("highlighted");
         }
       }
@@ -519,6 +603,21 @@ function dealGrid(){
     grid.appendChild(cardDiv);
   }
 }
+
+document.getElementById('copy-log-btn').addEventListener('click', () => {
+  const d = new Date();
+  const dateStr = d.getUTCFullYear() + "-" + (d.getUTCMonth() + 1) + "-" + d.getUTCDate();
+  const scoreRaw = document.getElementById("scoreDisplay").innerText;
+  const scoreFormatted = scoreRaw.replace(/\n/g, " | ");
+  const text = `https://ssantos2023.github.io/CMSI-4072_Santos/six_hands.html\nSix Hands (${dateStr})\n${scoreFormatted}`;
+  
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-log-btn');
+    const oldTxt = btn.innerText;
+    btn.innerText = "Copied!";
+    setTimeout(() => { btn.innerText = oldTxt; }, 2000);
+  });
+});
 
 createColorPicker();
 dealGrid();

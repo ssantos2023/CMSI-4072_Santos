@@ -2,129 +2,215 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Boxing Speed Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boxing Bot - Sammy's Games</title>
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #111;
-      color: #fff;
-      margin: 0;
-      padding: 0;
-      height: 100vh;
+    :root {
+      --primary: #007bff;
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --text: #ffffff;
+      --text-dim: #aaa;
+      --hp-player: #28a745;
+      --hp-cpu: #dc3545;
+    }
+
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background-color: var(--bg); 
+      color: var(--text); 
+      margin: 0; padding: 0;
+      min-height: 100vh;
+      text-align: center;
+    }
+
+    /* Navigation Bar */
+    nav {
+      background-color: var(--card-bg);
+      padding: 15px;
+      border-bottom: 1px solid #333;
       display: flex;
       justify-content: center;
-      align-items: center;
-      overflow: hidden;
+      gap: 15px;
+      flex-wrap: wrap;
     }
 
-    #rules-box {
-      position: absolute;
-      left: 40px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 260px;
-      background: #1a1a1a;
+    nav a { color: var(--text-dim); text-decoration: none; font-size: 0.9rem; transition: color 0.3s; }
+    nav a:hover { color: var(--primary); }
+    nav a.active { color: var(--primary); font-weight: bold; }
+
+    h1 { margin-top: 40px; font-size: 2.5rem; color: var(--primary); }
+    .subtitle { color: var(--text-dim); margin-bottom: 30px; }
+
+    /* Layout Containers */
+    .page-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
       padding: 20px;
-      border-radius: 12px;
-      border-left: 4px solid #ff4d4d;
-      font-size: 14px;
-      line-height: 1.5;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      z-index: 10;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
-    #rules-box h2 { margin-top: 0; color: #ff4d4d; font-size: 18px; text-transform: uppercase; }
-    #rules-box ul { padding-left: 20px; margin: 10px 0; }
-    #rules-box li { margin-bottom: 10px; }
-
-    .game-container {
-      width: 500px;
-      background: #1a1a1a;
-      padding: 40px;
-      border-radius: 20px;
-      text-align: center;
-      box-shadow: 0 15px 50px rgba(0,0,0,0.8);
+    .side-panel {
+      background-color: var(--card-bg);
       border: 1px solid #333;
+      border-radius: 15px;
+      padding: 20px;
+      width: 280px;
+      text-align: left;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
 
+    .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+    .dot { height: 8px; width: 8px; background-color: var(--primary); border-radius: 50%; }
+
+    .game-area {
+      background-color: var(--card-bg);
+      border: 1px solid #333;
+      border-radius: 15px;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 500px;
+      position: relative;
+    }
+
+    /* Status and HP */
     .status-container {
       display: flex;
-      justify-content: space-between;
-      margin: 30px 0;
-      font-size: 26px;
-      font-weight: 800;
-      letter-spacing: 1px;
+      justify-content: space-around;
+      width: 100%;
+      margin: 20px 0;
+      font-size: 1.5rem;
+      font-weight: bold;
     }
 
-    .hp-player { color: #4dff88; }
-    .hp-cpu { color: #ff4d4d; }
+    .hp-player { color: var(--hp-player); }
+    .hp-cpu { color: var(--hp-cpu); }
 
-    .buttons {
+    /* Buttons */
+    .button-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 15px;
+      width: 100%;
     }
 
-    button {
-      padding: 20px;
-      font-size: 16px;
+    .game-btn {
+      padding: 18px;
+      font-size: 1rem;
       font-weight: bold;
       cursor: pointer;
       border-radius: 10px;
-      border: none;
-      background: #333;
+      border: 1px solid #333;
+      background: #2a2a2a;
       color: white;
-      transition: all 0.1s;
+      transition: all 0.2s ease;
+      position: relative;
     }
 
-    button:hover:not(:disabled) { background: #444; transform: scale(1.02); }
-    button:active:not(:disabled) { transform: scale(0.98); }
-    button:disabled { background: #000; color: #444; cursor: not-allowed; opacity: 0.6; }
+    .game-btn:hover:not(:disabled) {
+      background-color: #333;
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
 
+    .game-btn:disabled {
+      background: var(--bg);
+      color: #555;
+      cursor: not-allowed;
+      border-color: #222;
+    }
+
+    .stun-label { 
+      display: block; 
+      color: var(--hp-cpu); 
+      font-size: 0.7rem; 
+      margin-top: 5px; 
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    /* Combat Log */
     #log {
-      margin-top: 30px;
-      padding: 20px;
-      background: #000;
+      margin-top: 25px;
+      padding: 15px;
+      background: var(--bg);
       border-radius: 10px;
+      width: 100%;
+      box-sizing: border-box;
       min-height: 120px;
-      font-size: 18px;
-      border: 1px solid #222;
-      line-height: 1.4;
+      font-size: 1rem;
+      border: 1px solid #333;
+      line-height: 1.6;
+      text-align: left;
     }
 
-    .stun-label { display: block; color: #ff4d4d; font-size: 11px; margin-top: 5px; }
+    .nav-btn {
+      width: 100%;
+      padding: 10px;
+      background: var(--primary);
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    hr { border: none; border-top: 1px solid #333; margin: 10px 0; }
   </style>
 </head>
 <body>
 
-  <aside id="rules-box">
-    <h2>Rules</h2>
-    <ul>
-      <li><strong>Jab (1):</strong> 1 Damage.</li>
-      <li><strong>Cross (2):</strong> 2 Damage.</li>
-      <li><strong>Hook (3):</strong> 3 Damage. <b>Unblockable.</b></li>
-      <li><strong>Block (B):</strong> Stuns Jab/Cross attackers for 1 turn.</li>
-    </ul>
-    <p>Only the faster (lower damage) move hits. Equal speeds trade damage. Keyboard controls (1, 2, 3, B) active.</small></p>
-  </aside>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="knockout_bot.html">Knockout Bot</a>
+        <a href="boxing.html" class="active">Boxing Bot</a>
+        <a href="five_hands.html">Five Hands</a>
+        <a href="six_hands.html">Six Hands</a>
+        <a href="spiral_puzzle.html">Color Spiral</a>
+        <a href="step_count.html">Step Count</a>
+        <a href="numberttt.html">Number TTT</a>
+        <a href="knockout.html">Knockout (PvP)</a>
+      </nav>
 
-  <main class="game-container">
-    <h1 style="margin-top:0">🥊 ARENA</h1>
-    
-    <div class="status-container">
-      <div id="p-hp" class="hp-player">P1: 20</div>
-      <div id="c-hp" class="hp-cpu">CPU: 20</div>
+  <h1>Boxing Bot</h1>
+  <p class="subtitle">Simultaneous-move combat vs a strong bot.</p>
+
+  <div class="page-wrapper">
+    <div class="side-panel">
+      <div class="section-header"><div class="dot"></div><h3>Rules</h3></div>
+      <p style="font-size: 0.85rem; color: var(--text-dim);">
+        <strong>Jab (1):</strong> 1 Damage. Fastest.<br><br>
+        <strong>Cross (2):</strong> 2 Damage. Medium speed.<br><br>
+        <strong>Hook (3):</strong> 3 Damage. Unblockable.<br><br>
+        <strong>Block (B):</strong> Blocks damage and stuns Jab/Cross for 1 turn.<br><br>
+        Only the faster move lands.<br><br>
+        The bot is strong, but it doesn't cheat.
+      </p>
+      <button class="nav-btn" onclick="location.reload()">Restart Game</button>
     </div>
 
-    <div class="buttons">
-      <button id="btn-Jab" onclick="handleInput('Jab')">JAB (1)<span id="cd-Jab" class="stun-label"></span></button>
-      <button id="btn-Cross" onclick="handleInput('Cross')">CROSS (2)<span id="cd-Cross" class="stun-label"></span></button>
-      <button id="btn-Hook" onclick="handleInput('Hook')">HOOK (3)</button>
-      <button id="btn-Block" onclick="handleInput('Block')">BLOCK (B)</button>
-    </div>
+    <div class="game-area">
+      <div class="status-container">
+        <div class="hp-player">YOU: <span id="p-hp">20</span></div>
+        <div class="hp-cpu">CPU: <span id="c-hp">20</span></div>
+      </div>
 
-    <div id="log">Ready? Fight!</div>
-  </main>
+      <div class="button-grid">
+        <button id="btn-Jab" class="game-btn" onclick="handleInput('Jab')">JAB (1)<span id="cd-Jab" class="stun-label"></span></button>
+        <button id="btn-Cross" class="game-btn" onclick="handleInput('Cross')">CROSS (2)<span id="cd-Cross" class="stun-label"></span></button>
+        <button id="btn-Hook" class="game-btn" onclick="handleInput('Hook')">HOOK (3)</button>
+        <button id="btn-Block" class="game-btn" onclick="handleInput('Block')">BLOCK (B)</button>
+      </div>
+
+      <div id="log">Welcome to the Arena. Select a move or use hotkeys (1, 2, 3, B).</div>
+    </div>
+  </div>
 
 <script>
   const moves = {
@@ -141,26 +227,16 @@
 
   function getComputerMove() {
     const roll = Math.random();
-    // AI Priority 1: AI is stunned (defensive)
-    if (cCD['Jab'] > 0 || cCD['Cross'] > 0) {
-      return roll <= 0.472 ? 'Block' : 'Cross';
-    }
-
-    // AI Priority 2: Player is stunned (punishment)
-    if (pCD['Jab'] > 0 || pCD['Cross'] > 0) {
-      return roll <= 0.786 ? 'Jab' : 'Hook';
-    }
-
-    // Default Behavior: 40/40/20 split
-    if (roll <= 0.688) return 'Jab';
-    if (roll <= 0.917) return 'Block';
+    if (cCD['Jab'] > 0 || cCD['Cross'] > 0) return roll <= 0.5 ? 'Block' : 'Cross';
+    if (pCD['Jab'] > 0 || pCD['Cross'] > 0) return roll <= 0.8 ? 'Jab' : 'Hook';
+    if (roll <= 0.6) return 'Jab';
+    if (roll <= 0.9) return 'Block';
     return 'Hook';
   }
 
   function handleInput(move) {
-    // FIX: Check cooldown before allowing play
     if (pHP <= 0 || cHP <= 0) return;
-    if (pCD[move] > 0) return; // Ignore input if move is on cooldown
+    if (pCD[move] > 0) return; 
     play(move);
   }
 
@@ -168,52 +244,46 @@
     const cpuMove = getComputerMove();
     let pDmg = 0;
     let cDmg = 0;
-    let log = `<b>You:</b> ${playerMove} | <b>CPU:</b> ${cpuMove}<br><hr style="opacity:0.1">`;
+    let log = `<b>You:</b> ${playerMove} | <b>CPU:</b> ${cpuMove}<br><hr>`;
 
     let pBlocked = false, cBlocked = false;
 
-    // Resolve Blocks
     if (playerMove === 'Block') {
       if (['Jab', 'Cross'].includes(cpuMove)) { 
-        cCD[cpuMove] = 1; 
-        pBlocked = true; 
-        log += "🛡️ You STUNNED the CPU!<br>"; 
+        cCD[cpuMove] = 1; pBlocked = true; 
+        log += "🛡️ Block successful! CPU Stunned.<br>"; 
       } else if (cpuMove === 'Hook') { 
         pDmg = 3; 
-        log += "❌ CPU Hook smashed your block!<br>"; 
+        log += "❌ Block failed! CPU Hook landed.<br>"; 
       }
     }
 
     if (cpuMove === 'Block') {
       if (['Jab', 'Cross'].includes(playerMove)) { 
-        pCD[playerMove] = 1; 
-        cBlocked = true; 
-        log += "⚠️ CPU STUNNED you!<br>"; 
+        pCD[playerMove] = 1; cBlocked = true; 
+        log += "⚠️ CPU Blocked! You are Stunned.<br>"; 
       } else if (playerMove === 'Hook') { 
         cDmg = 3; 
-        log += "💥 Your Hook broke their defense!<br>"; 
+        log += "💥 Hook smashed the CPU block!<br>"; 
       }
     }
 
-    // Resolve Speed (if not successfully blocked)
     if (!pBlocked && !cBlocked && playerMove !== 'Block' && cpuMove !== 'Block') {
       if (moves[playerMove].speed < moves[cpuMove].speed) { 
         cDmg = moves[playerMove].damage; 
-        log += "⚡ Too fast! You hit first.<br>"; 
+        log += "⚡ Faster move! You hit first.<br>"; 
       } else if (moves[playerMove].speed > moves[cpuMove].speed) { 
         pDmg = moves[cpuMove].damage; 
-        log += "🥊 CPU caught you!<br>"; 
+        log += "🥊 CPU was faster!<br>"; 
       } else { 
-        pDmg = moves[cpuMove].damage; 
-        cDmg = moves[playerMove].damage; 
-        log += "👊 You both traded hits.<br>"; 
+        pDmg = moves[cpuMove].damage; cDmg = moves[playerMove].damage; 
+        log += "👊 Traded hits!<br>"; 
       }
     }
 
     pHP = Math.max(0, pHP - pDmg);
     cHP = Math.max(0, cHP - cDmg);
 
-    // Cooldown Logic: Moves not used this turn recover
     Object.keys(pCD).forEach(m => { if (pCD[m] > 0 && playerMove !== m) pCD[m]--; });
     Object.keys(cCD).forEach(m => { if (cCD[m] > 0 && cpuMove !== m) cCD[m]--; });
 
@@ -221,25 +291,22 @@
   }
 
   function updateUI(log) {
-    document.getElementById('p-hp').innerText = `P1: ${pHP}`;
-    document.getElementById('c-hp').innerText = `CPU: ${cHP}`;
+    document.getElementById('p-hp').innerText = pHP;
+    document.getElementById('c-hp').innerText = cHP;
     document.getElementById('log').innerHTML = log;
 
-    // Visual updates for buttons
     ['Jab', 'Cross'].forEach(m => {
       const btn = document.getElementById(`btn-${m}`);
-      const isStunned = pCD[m] > 0;
-      btn.disabled = isStunned;
-      document.getElementById(`cd-${m}`).innerText = isStunned ? "STUNNED" : "";
+      btn.disabled = pCD[m] > 0;
+      document.getElementById(`cd-${m}`).innerText = pCD[m] > 0 ? "STUNNED" : "";
     });
 
     if (pHP <= 0 || cHP <= 0) {
       const msg = pHP > cHP ? "VICTORY! 🏆" : (pHP < cHP ? "DEFEAT! 💀" : "DRAW! 🥊");
-      document.getElementById('log').innerHTML += `<h2>${msg}</h2><button onclick="location.reload()" style="background:#ff4d4d; width:100%">REMATCH</button>`;
+      document.getElementById('log').innerHTML += `<h2 style="color:var(--primary); text-align:center;">${msg}</h2><button onclick="location.reload()" class="nav-btn">REMATCH</button>`;
     }
   }
 
-  // Keyboard Event Listener
   document.addEventListener('keydown', (e) => {
     if (e.key === '1') handleInput('Jab');
     if (e.key === '2') handleInput('Cross');

@@ -5,25 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Five Hands - Sammy's Games</title>
   <style>
-    /* Global Styles (Platform Consistent) */
-    body { 
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-      background-color: #121212; 
-      color: white; 
-      text-align: center; 
-      margin: 0;
-      padding: 0;
+    :root {
+      --primary: #007bff;
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --text: #ffffff;
+      --text-dim: #aaa;
+      --nav-bg: #1e1e1e;
     }
 
-    /* Navigation Bar */
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background-color: var(--bg); 
+      color: var(--text); 
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* Global Navigation Bar */
     nav {
-      background-color: #1e1e1e;
+      background-color: var(--nav-bg);
       padding: 15px;
       border-bottom: 1px solid #333;
       display: flex;
       justify-content: center;
       gap: 15px;
       flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
 
     nav a {
@@ -33,67 +45,85 @@
       transition: color 0.3s;
     }
 
-    nav a:hover {
-      color: #007bff;
-    }
+    nav a:hover { color: var(--primary); }
+    nav a.active { color: var(--primary); font-weight: bold; }
 
     h1 {
-      margin-top: 30px;
+      margin-top: 40px;
       font-size: 2.5rem;
-      color: #007bff;
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 5px;
     }
 
-    /* Layout */
+    .subtitle {
+      text-align: center;
+      color: var(--text-dim);
+      margin-bottom: 30px;
+      font-size: 1rem;
+    }
+
+    /* Layout Container */
     .page-wrapper {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
+      align-items: flex-start;
       gap: 30px;
       padding: 20px;
       max-width: 1300px;
       margin: 0 auto;
     }
 
-    /* Side Panels */
-    .rules-panel, .groups-panel {
-      background-color: #1e1e1e;
+    /* Side Panels (Cards) */
+    .side-panel {
+      background-color: var(--card-bg);
       border: 1px solid #333;
       border-radius: 15px;
-      padding: 25px;
+      padding: 20px;
       width: 280px;
       text-align: left;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
 
-    .rules-panel h3, .groups-panel h3 {
-      color: #007bff;
-      margin-top: 0;
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
       border-bottom: 1px solid #333;
       padding-bottom: 10px;
     }
 
-    .rules-panel p {
-      font-size: 0.9rem;
-      color: #ccc;
-      line-height: 1.5;
+    .dot {
+      height: 8px;
+      width: 8px;
+      background-color: var(--primary);
+      border-radius: 50%;
     }
 
-    /* Center Game Area */
-    .center-area {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
+    .side-panel h3 {
+      color: var(--text);
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .side-panel p {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.5;
     }
 
     /* Color Picker */
     .color-picker {
       display: flex;
       gap: 12px;
-      background: #1e1e1e;
+      background: var(--card-bg);
       padding: 15px;
       border-radius: 50px;
       border: 1px solid #333;
+      margin-bottom: 20px;
     }
 
     .color-button {
@@ -102,7 +132,7 @@
       border-radius: 50%;
       border: 3px solid transparent;
       cursor: pointer;
-      transition: transform 0.2s, border-color 0.2s;
+      transition: transform 0.2s;
     }
 
     .color-button.selected-color {
@@ -114,45 +144,42 @@
     .grid {
       display: grid;
       grid-template-columns: repeat(5, 78px);
-      grid-template-rows: repeat(5, 110px);
       gap: 10px;
+      background: var(--card-bg);
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid #333;
     }
 
     .card {
       width: 78px;
       height: 110px;
       border-radius: 8px;
-      background: #fdf8f0; /* Classic card paper color */
+      background: #fdf8f0;
       border: 1px solid #ccc;
       cursor: pointer;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.15s, box-shadow 0.15s;
+      transition: transform 0.15s;
       user-select: none;
-      color: #111; /* Default card text color */
+      color: #111;
     }
 
-    .card:hover {
-      transform: translateY(-5px);
-      z-index: 5;
-    }
+    .card:hover { transform: translateY(-5px); z-index: 5; }
 
-    /* Card face styling */
     .card-corner { position: absolute; top: 4px; left: 5px; display: flex; flex-direction: column; align-items: center; line-height: 1; }
     .card-corner-bottom { position: absolute; bottom: 4px; right: 5px; display: flex; flex-direction: column; align-items: center; line-height: 1; transform: rotate(180deg); }
     .corner-rank { font-size: 16px; font-weight: bold; }
     .corner-suit { font-size: 12px; }
     .card-center { font-size: 32px; pointer-events: none; }
 
-    /* Suit Colors on Card */
     .card.red-suit { color: #cc1111; }
     .card.blue-suit { color: #1144cc; }
     .card.green-suit { color: #117722; }
     .card.black-suit { color: #111; }
 
-    /* Highlights */
     .card.highlighted::after {
       content: '';
       position: absolute;
@@ -163,18 +190,28 @@
       pointer-events: none;
     }
 
-    /* Status Display */
-    .group-dot {
-      display: inline-block;
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      margin-right: 8px;
-    }
-
-    #groupList { font-size: 0.85rem; color: #ccc; }
-    .handname { font-style: italic; color: #007bff; margin-left: 18px; font-size: 0.8rem; }
+    /* UI Elements */
+    #groupList { font-size: 0.85rem; color: var(--text-dim); }
+    #groupList div { margin-bottom: 8px; }
+    .handname { font-style: italic; color: var(--primary); margin-left: 18px; font-size: 0.8rem; }
     .result { margin-top: 15px; font-size: 1.2rem; font-weight: bold; }
     .score-summary { margin-top: 10px; font-size: 0.9rem; color: #888; border-top: 1px solid #333; padding-top: 10px; line-height: 1.4; }
+    .group-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; }
+
+    #copy-log-btn {
+      margin-top: 15px;
+      width: 100%;
+      padding: 10px;
+      background: var(--primary);
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    #copy-log-btn:hover { background: #0056b3; }
 
   </style>
 </head>
@@ -182,40 +219,46 @@
 
   <nav>
     <a href="index.html">Home</a>
-    <a href="rps.html">RPS</a>
-    <a href="knockout.html">Knockout</a>
     <a href="knockout_bot.html">Knockout Bot</a>
-    <a href="five_hands.html">Five Hands</a>
+    <a href="boxing.html">Boxing Bot</a>
+    <a href="five_hands.html" class="active">Five Hands</a>
     <a href="six_hands.html">Six Hands</a>
-    <a href="step_count.html">Step Count</a>
     <a href="spiral_puzzle.html">Color Spiral</a>
+    <a href="step_count.html">Step Count</a>
+    <a href="numberttt.html">Number TTT</a>
+    <a href="knockout.html">Knockout (PvP)</a>
   </nav>
 
   <h1>Five Hands</h1>
+  <p class="subtitle">Poker hands optimization puzzle.</p>
 
   <div class="page-wrapper">
-
-    <div class="rules-panel">
-      <h3>Rules</h3>
+    <div class="side-panel">
+      <div class="section-header">
+        <div class="dot"></div>
+        <h3>Rules</h3>
+      </div>
       <p>Divide the 5×5 grid into 5 connected groups of 5 using colors.</p>
-      <br>
-      <p>Each group forms a 5-card poker hand. Jokers are wild.</p>
-      <br>
-      <p><strong>Goal:</strong> Make your <u>weakest</u> hand as strong as possible!</p>
+      <p>Each group forms a 5-card poker hand. 🃏 <b>Jokers are wild.</b></p>
+      <p><b>Goal:</b> Make your <u>weakest</u> hand as strong as possible!</p>
+      <p style="font-size: 0.75rem; border-top: 1px solid #333; padding-top: 10px;">Grid resets daily at midnight UTC.</p>
     </div>
 
-    <div class="center-area">
+    <div class="center-area" style="display: flex; flex-direction: column; align-items: center;">
       <div class="color-picker" id="colorPicker"></div>
       <div class="grid" id="cardGrid"></div>
+      <div id="validationResult" class="result" style="color: #dc3545;">✗ INVALID</div>
     </div>
 
-    <div class="groups-panel">
-      <h3>Your Hands</h3>
+    <div class="side-panel">
+      <div class="section-header">
+        <div class="dot"></div>
+        <h3>Your Hands</h3>
+      </div>
       <div id="groupList"></div>
-      <div id="validationResult" class="result">✗ INVALID</div>
       <div id="scoreDisplay" class="score-summary"></div>
+      <button id="copy-log-btn" style="display: none;">Share Results</button>
     </div>
-
   </div>
 
 <script>
@@ -329,6 +372,7 @@ function updateGroupsAndValidation() {
   const gl = document.getElementById("groupList");
   const resultDiv = document.getElementById("validationResult");
   const scoreDisplay = document.getElementById("scoreDisplay");
+  const shareBtn = document.getElementById('copy-log-btn');
   gl.innerHTML = ""; scoreDisplay.textContent = "";
 
   const cards = Array.from(document.querySelectorAll(".card"));
@@ -361,6 +405,7 @@ function updateGroupsAndValidation() {
 
   if (fiveEach && connected && handResults.length===5) {
     resultDiv.textContent = "✓ VALID"; resultDiv.style.color = "#28a745";
+    shareBtn.style.display = "block";
     const hns = [...document.querySelectorAll(".handname")];
     let lowestHand=null, lowestVec=null;
     hns.forEach(h => {
@@ -370,11 +415,11 @@ function updateGroupsAndValidation() {
     if (lowestHand) {
       const lr = handResults[lowestHand.dataset.index];
       lowestHand.style.fontWeight = "bold"; lowestHand.style.color = "#FFD700";
-      // Updated display as requested
       scoreDisplay.innerHTML = `<strong>Score:</strong> ${lr.nm}<br><span style="color:#eee; font-size:0.8rem;">${lr.cards.join(", ")}</span>`;
     }
   } else {
     resultDiv.textContent = "✗ INVALID"; resultDiv.style.color = "#dc3545";
+    shareBtn.style.display = "none";
   }
 }
 
@@ -403,7 +448,7 @@ function dealGrid() {
     const cardStr = deck[i];
     const isJoker = cardStr==="JOKER"||cardStr==="joker";
     const cardDiv = document.createElement("div");
-    cardDiv.className = "card" + (isJoker ? " black-suit" : ""); // Visual base
+    cardDiv.className = "card" + (isJoker ? " black-suit" : ""); 
     cardDiv.dataset.cardStr = cardStr;
     cardDiv.dataset.highlight = "";
 
@@ -433,6 +478,22 @@ function dealGrid() {
     grid.appendChild(cardDiv);
   }
 }
+
+document.getElementById('copy-log-btn').addEventListener('click', () => {
+  const d = new Date();
+  const dateStr = d.getUTCFullYear() + "-" + (d.getUTCMonth() + 1) + "-" + d.getUTCDate();
+  const scoreRaw = document.getElementById("scoreDisplay").innerText;
+  const scoreFormatted = scoreRaw.replace(/\n/g, " | ");
+  
+  const text = `https://ssantos2023.github.io/CMSI-4072_Santos/five_hands.html\nFive Hands (${dateStr})\n${scoreFormatted}`;
+  
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-log-btn');
+    const originalText = btn.innerText;
+    btn.innerText = "Copied!";
+    setTimeout(() => { btn.innerText = originalText; }, 2000);
+  });
+});
 
 createColorPicker();
 dealGrid();

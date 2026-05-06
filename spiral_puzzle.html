@@ -5,232 +5,133 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Color Spiral - Sammy's Games</title>
   <style>
-    /* Global Styles (Platform Consistent) */
+    :root {
+      --primary: #007bff;
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --text: #ffffff;
+      --text-dim: #aaa;
+      --nav-bg: #1e1e1e;
+    }
+
     body { 
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-      background-color: #121212; 
-      color: white; 
-      text-align: center; 
+      background-color: var(--bg); 
+      color: var(--text); 
       margin: 0;
       padding: 0;
       min-height: 100vh;
+      line-height: 1.6;
     }
 
-    /* Navigation Bar */
     nav {
-      background-color: #1e1e1e;
+      background-color: var(--nav-bg);
       padding: 15px;
       border-bottom: 1px solid #333;
       display: flex;
       justify-content: center;
       gap: 15px;
       flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
 
-    nav a {
-      color: #aaa;
-      text-decoration: none;
-      font-size: 0.9rem;
-      transition: color 0.3s;
-    }
+    nav a { color: #aaa; text-decoration: none; font-size: 0.9rem; transition: color 0.3s; }
+    nav a:hover { color: var(--primary); }
+    nav a.active { color: var(--primary); font-weight: bold; }
 
-    nav a:hover {
-      color: #007bff;
-    }
+    h1 { margin-top: 40px; font-size: 2.5rem; color: var(--primary); text-align: center; margin-bottom: 5px; }
+    .subtitle { text-align: center; color: var(--text-dim); margin-bottom: 30px; font-size: 1rem; }
 
-    h1 {
-      margin-top: 30px;
-      font-size: 2.5rem;
-      color: #007bff;
-      margin-bottom: 10px;
-    }
+    .page-wrapper { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 30px; padding: 20px; max-width: 1300px; margin: 0 auto; }
 
-    /* Layout Container */
-    .page-wrapper {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 30px;
-      padding: 20px;
-      max-width: 1300px;
-      margin: 0 auto;
-    }
-
-    /* Side Panels */
-    .side-panel {
-      background-color: #1e1e1e;
-      border: 1px solid #333;
-      border-radius: 15px;
-      padding: 20px;
-      width: 250px;
-      text-align: left;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    }
-
-    .side-panel h3 {
-      color: #007bff;
-      margin-top: 0;
-      border-bottom: 1px solid #333;
-      padding-bottom: 10px;
-      font-size: 1.1rem;
-    }
-
-    .side-panel p, .side-panel li {
-      font-size: 0.85rem;
-      color: #ccc;
-      line-height: 1.5;
-    }
-
+    .side-panel { background-color: var(--card-bg); border: 1px solid #333; border-radius: 15px; padding: 20px; width: 260px; text-align: left; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+    .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+    .dot { height: 8px; width: 8px; background-color: var(--primary); border-radius: 50%; }
+    .side-panel h3 { color: var(--text); margin: 0; font-size: 1.1rem; font-weight: 500; }
+    .side-panel p, .side-panel li { font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; }
     ul { padding-left: 18px; margin: 10px 0; }
 
-    /* Center Game Area */
-    .game-area {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .stat-bar {
-      background: #1e1e1e;
-      border: 1px solid #333;
-      border-radius: 10px;
-      padding: 15px 25px;
-      width: 100%;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-    }
-
+    .game-area { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+    .stat-bar { background: var(--card-bg); border: 1px solid #333; border-radius: 12px; padding: 15px 25px; width: 100%; display: flex; justify-content: space-around; align-items: center; box-sizing: border-box; }
     .stat-item { text-align: center; }
     .stat-label { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; display: block; }
-    .stat-value { font-size: 1.4rem; font-weight: bold; color: white; }
+    .stat-value { font-size: 1.6rem; font-weight: bold; color: white; }
     .stat-value.moves { color: #ffcc00; }
 
-    /* Grid */
-    #grid {
-      display: grid;
-      grid-template-columns: 30px repeat(6, 65px);
-      grid-template-rows: 30px repeat(6, 65px);
-      gap: 6px;
-      background: #1e1e1e;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid #333;
-    }
-
-    .cell {
-      width: 65px;
-      height: 65px;
-      border-radius: 6px;
-      border: 1px solid rgba(255,255,255,0.1);
-      cursor: pointer;
-      transition: transform 0.1s, box-shadow 0.1s;
-    }
-
-    .cell:hover { transform: scale(1.05); z-index: 2; border-color: white; }
+    #grid { display: grid; grid-template-columns: 30px repeat(6, 65px); grid-template-rows: 30px repeat(6, 65px); gap: 6px; background: var(--card-bg); padding: 12px; border-radius: 12px; border: 1px solid #333; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
+    .cell { width: 65px; height: 65px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: transform 0.1s, border-color 0.2s; }
+    .cell:hover { transform: scale(1.05); z-index: 2; border-color: rgba(255,255,255,0.4); }
     .cell.selected { outline: 3px solid white; outline-offset: 2px; z-index: 5; transform: scale(1.05); }
+    .label { font-weight: bold; color: #555; font-size: 14px; display: flex; align-items: center; justify-content: center; }
 
-    .label {
-      font-weight: bold;
-      color: #555;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    #move-log { height: 300px; overflow-y: auto; background: #121212; border: 1px solid #333; border-radius: 8px; padding: 10px; font-family: 'Consolas', monospace; font-size: 0.85rem; color: #888; margin-bottom: 15px; }
+    #move-log div { margin-bottom: 4px; border-bottom: 1px solid #222; padding-bottom: 2px; }
 
-    /* Move Log Styling */
-    #move-log {
-      height: 300px;
-      overflow-y: auto;
-      background: #121212;
-      border: 1px solid #333;
-      border-radius: 8px;
-      padding: 10px;
-      font-family: 'Consolas', monospace;
-      font-size: 0.85rem;
-      color: #888;
-      margin-bottom: 15px;
-    }
-    #move-log div { margin-bottom: 4px; }
-
-    /* Buttons */
     .btn-container { display: flex; gap: 10px; margin-top: 10px; width: 100%; }
-    
-    button {
-      flex: 1;
-      padding: 12px;
-      font-size: 0.85rem;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-      background-color: #333;
-      color: white;
-      border-radius: 8px;
-      transition: background 0.2s;
-    }
-
+    button { flex: 1; padding: 12px; font-size: 0.85rem; font-weight: bold; cursor: pointer; border: none; color: white; border-radius: 8px; transition: all 0.2s; background-color: #333; }
     button:hover { background-color: #444; }
-    #undo-btn { background-color: #553333; }
-    #undo-btn:hover { background-color: #774444; }
-    #copy-log-btn { background-color: #007bff; margin-top: auto; }
-    #copy-log-btn:hover { background-color: #0056b3; }
+    
+    #undo-btn { background-color: #3d2b2b; color: #ff9999; }
+    #undo-btn:hover { background-color: #553333; }
+    
+    #reset-btn { background-color: #3d2e23; color: #ffcc99; } /* Styling for Reset */
+    #reset-btn:hover { background-color: #553d2d; }
+    
+    #new-game-btn { background-color: var(--primary); }
+    #new-game-btn:hover { background-color: #0056b3; }
 
+    #copy-log-btn { background-color: #222; border: 1px solid #444; color: var(--text-dim); margin-top: auto; }
+    #copy-log-btn:hover { border-color: var(--primary); color: white; }
     #score-breakdown { font-size: 0.8rem; color: #666; margin-top: -5px; }
-
   </style>
 </head>
 <body>
 
   <nav>
     <a href="index.html">Home</a>
-    <a href="rps.html">RPS</a>
-    <a href="knockout.html">Knockout</a>
     <a href="knockout_bot.html">Knockout Bot</a>
+    <a href="boxing.html">Boxing Bot</a>
     <a href="five_hands.html">Five Hands</a>
     <a href="six_hands.html">Six Hands</a>
+    <a href="spiral_puzzle.html" class="active">Color Spiral</a>
     <a href="step_count.html">Step Count</a>
-    <a href="spiral_puzzle.html">Color Spiral</a>
+    <a href="numberttt.html">Number TTT</a>
+    <a href="knockout.html">Knockout (PvP)</a>
   </nav>
 
   <h1>Color Spiral</h1>
+  <p class="subtitle">Spin colors into order on the daily grid.</p>
 
   <div class="page-wrapper">
     <div class="side-panel">
-      <h3>Rules</h3>
+      <div class="section-header"><div class="dot"></div><h3>Rules</h3></div>
       <ul>
         <li>Select a tile, then select one <b>diagonally adjacent</b>.</li>
-        <li>The 2x2 area created will rotate clockwise.</li>
-        <li>Score is the sum of the <b>largest cluster</b> of each color.</li>
-        <li>Try to maximize your clusters within the move limit!</li>
+        <li>The 2x2 area outlined will rotate clockwise.</li>
+        <li>Your score is the sum of the <b>largest connected group</b> of each color.</li>
+        <li>Maximize your score and share with friends!</li>
+        <p style="font-size: 0.75rem; border-top: 1px solid #333; padding-top: 10px;">Grid resets daily at midnight UTC.</p>
       </ul>
     </div>
 
     <div class="game-area">
       <div class="stat-bar">
-        <div class="stat-item">
-          <span class="stat-label">Total Score</span>
-          <div class="stat-value" id="score">0</div>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Moves Left</span>
-          <div class="stat-value moves" id="move-limit">0</div>
-        </div>
+        <div class="stat-item"><span class="stat-label">Total Score</span><div class="stat-value" id="score">0</div></div>
+        <div class="stat-item"><span class="stat-label">Moves Left</span><div class="stat-value moves" id="move-limit">0</div></div>
       </div>
       <div id="score-breakdown"></div>
-
       <div id="grid"></div>
-      
       <div class="btn-container">
         <button id="undo-btn">Undo Move</button>
+        <button id="reset-btn">Reset Puzzle</button>
         <button id="new-game-btn">Unlimited Mode</button>
       </div>
     </div>
 
     <div class="side-panel" style="display: flex; flex-direction: column;">
-      <h3>Move Log</h3>
+      <div class="section-header"><div class="dot"></div><h3>Move Log</h3></div>
       <div id="move-log"></div>
       <button id="copy-log-btn">Copy Results</button>
     </div>
@@ -244,7 +145,7 @@
   const moveLogDisplay = document.getElementById("move-log");
 
   const size = 6;
-  const colors = ["#e74c3c", "#3498db", "#2ecc71", "#f1c40f"]; // Updated to brighter UI colors
+  const colors = ["#e74c3c", "#3498db", "#2ecc71", "#f1c40f"]; 
   const colorNames = ["red", "blue", "green", "yellow"];
   const colLabels = ['A', 'B', 'C', 'D', 'E', 'F'];
 
@@ -300,20 +201,17 @@
     grid.innerHTML = '';  
     const corner = document.createElement("div");
     grid.appendChild(corner);
-
     for (let i = 0; i < size; i++) {
       const label = document.createElement("div");
       label.classList.add("label");
       label.textContent = colLabels[i];
       grid.appendChild(label);
     }
-
     for (let row = 0; row < size; row++) {
       const label = document.createElement("div");
       label.classList.add("label");
       label.textContent = row + 1;
       grid.appendChild(label);
-
       cells[row] = [];
       for (let col = 0; col < size; col++) {
         const cell = document.createElement("div");
@@ -328,31 +226,25 @@
 
   function handleClick(row, col) {
     if (moves >= moveLimit) return;
-
     if (!selected) {
       selected = { row, col };
       cells[row][col].classList.add("selected");
       return;
     }
-
     const r1 = selected.row;
     const c1 = selected.col;
-
     if (Math.abs(r1 - row) === 1 && Math.abs(c1 - col) === 1) {
       const topLeftRow = Math.min(r1, row);
       const topLeftCol = Math.min(c1, col);
       const moveLabel = `${colLabels[topLeftCol]}${topLeftRow + 1}`;
-      
       rotateSquare(r1, c1, row, col);
       storeBoardState(); 
       moveSequence.push(moveLabel);
-      
       moves++;
       updateScore();
       updateMoveLimit();
       updateMoveLog();
     }
-
     cells[r1][c1].classList.remove("selected");
     selected = null;
   }
@@ -362,17 +254,14 @@
     const maxRow = Math.max(r1, r2);
     const minCol = Math.min(c1, c2);
     const maxCol = Math.max(c1, c2);
-
     const tl = currentBoard[minRow][minCol];
     const tr = currentBoard[minRow][maxCol];
     const br = currentBoard[maxRow][maxCol];
     const bl = currentBoard[maxRow][minCol];
-
     currentBoard[minRow][minCol] = bl;
     currentBoard[minRow][maxCol] = tl;
     currentBoard[maxRow][maxCol] = tr;
     currentBoard[maxRow][minCol] = br;
-
     updateGrid();
   }
 
@@ -383,6 +272,21 @@
       const previousState = moveHistory[moveHistory.length - 1];
       currentBoard = previousState.map(row => [...row]);
       moves--;
+      updateGrid();
+      updateScore();
+      updateMoveLimit();
+      updateMoveLog();
+    }
+  }
+
+  function resetPuzzle() {
+    if (moves === 0) return;
+    if (confirm("Reset the current board and move limit to the start?")) {
+      const initialState = moveHistory[0];
+      currentBoard = initialState.map(row => [...row]);
+      moveHistory = [initialState];
+      moveSequence = [];
+      moves = 0;
       updateGrid();
       updateScore();
       updateMoveLimit();
@@ -441,8 +345,9 @@
 
   document.getElementById('new-game-btn').addEventListener('click', () => startGame(false));
   document.getElementById('undo-btn').addEventListener('click', undoMove);
+  document.getElementById('reset-btn').addEventListener('click', resetPuzzle);
   document.getElementById('copy-log-btn').addEventListener('click', () => {
-    const text = `Color Spiral (${dateStr}) - Score: ${scoreDisplay.textContent}\nSequence: ${moveSequence.join(", ")}`;
+    const text = `https://ssantos2023.github.io/CMSI-4072_Santos/spiral_puzzle.html Color Spiral (${dateStr}) - Score: ${scoreDisplay.textContent}\nSequence: ${moveSequence.join(", ")}`;
     navigator.clipboard.writeText(text).then(() => alert("Results copied to clipboard!"));
   });
 

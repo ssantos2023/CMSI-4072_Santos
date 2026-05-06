@@ -134,20 +134,20 @@
     Block: { speed: 0, damage: 0 }
   };
 
-  let pHP = 5000;
-  let cHP = 5000;
+  let pHP = 1000;
+  let cHP = 1000;
   let pCD = { Jab: 0, Cross: 0 };
   let cCD = { Jab: 0, Cross: 0 };
 
   function getComputerMove() {
     const roll = Math.random();
     // AI Priority 1: AI is stunned (defensive)
-    if (cCD['Jab'] > 0 || cCD['Cross'] > 0) {
+    if (cCD['Jab'] > 0) {
       return roll <= 0.472 ? 'Block' : 'Cross';
     }
 
     // AI Priority 2: Player is stunned (punishment)
-    if (pCD['Jab'] > 0 || pCD['Cross'] > 0) {
+    if (pCD['Jab'] > 0) {
       return roll <= 0.786 ? 'Jab' : 'Hook';
     }
 
@@ -158,20 +158,20 @@
   }
 
   function handleInput(move) {
-    if (cCD['Jab'] > 0) {
+    if (pCD['Jab'] > 0) {
+        // disadvantage
+        move = 'Cross'
+    }
+    else if (cCD['Jab'] > 0) {
         // advantage
         move = 'Jab'
-    }
-    else if (pCD['Jab'] > 0) {
-        // disadvantage
-        move = 'Block'
     } else {
         // default
-        move = 'Jab'
+        move = 'Block'
     }
     // FIX: Check cooldown before allowing play
-    if (pHP <= 0 || cHP <= 0) return;
-    if (pCD[move] > 0) return; // Ignore input if move is on cooldown
+    if (pHP <= 0 || cHP <= 0) move = 'Block';
+    if (pCD[move] > 0) move = 'Block'; // Ignore input if move is on cooldown
 
     play(move);
   }
@@ -187,7 +187,7 @@
     // Resolve Blocks
     if (playerMove === 'Block') {
       if (['Jab', 'Cross'].includes(cpuMove)) { 
-        cCD[cpuMove] = 1; 
+        cCD[cpuMove] = 2; 
         pBlocked = true; 
         log += "🛡️ You STUNNED the CPU!<br>"; 
       } else if (cpuMove === 'Hook') { 
@@ -198,7 +198,7 @@
 
     if (cpuMove === 'Block') {
       if (['Jab', 'Cross'].includes(playerMove)) { 
-        pCD[playerMove] = 1; 
+        pCD[playerMove] = 2; 
         cBlocked = true; 
         log += "⚠️ CPU STUNNED you!<br>"; 
       } else if (playerMove === 'Hook') { 
@@ -263,7 +263,7 @@
   window.onload = () => {
     gameInterval = setInterval(() => {
         handleInput(); // Calls without arguments to trigger auto-logic
-    }, 0); 
+    }, 1); 
   };
 </script>
 </body>

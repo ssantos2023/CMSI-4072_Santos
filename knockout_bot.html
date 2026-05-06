@@ -5,19 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Knockout Bot - Sammy's Games</title>
   <style>
-    /* Global Styles */
+    :root {
+      --primary: #007bff;
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --text: #ffffff;
+      --text-dim: #aaa;
+      --valid-green: #1a4a2a;
+      --valid-border: #28a745;
+    }
+
     body { 
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-      background-color: #121212; 
-      color: white; 
-      text-align: center; 
-      margin: 0;
-      padding: 0;
+      background-color: var(--bg); 
+      color: var(--text); 
+      margin: 0; padding: 0;
+      min-height: 100vh;
+      text-align: center;
     }
 
     /* Navigation Bar */
     nav {
-      background-color: #1e1e1e;
+      background-color: var(--card-bg);
       padding: 15px;
       border-bottom: 1px solid #333;
       display: flex;
@@ -26,23 +35,14 @@
       flex-wrap: wrap;
     }
 
-    nav a {
-      color: #aaa;
-      text-decoration: none;
-      font-size: 0.9rem;
-      transition: color 0.3s;
-    }
+    nav a { color: var(--text-dim); text-decoration: none; font-size: 0.9rem; transition: color 0.3s; }
+    nav a:hover { color: var(--primary); }
+    nav a.active { color: var(--primary); font-weight: bold; }
 
-    nav a:hover {
-      color: #007bff;
-    }
+    h1 { margin-top: 40px; font-size: 2.5rem; color: var(--primary); }
+    .subtitle { color: var(--text-dim); margin-bottom: 30px; }
 
-    h1 {
-      margin-top: 30px;
-      font-size: 2.5rem;
-      color: #007bff;
-    }
-
+    /* Layout Containers */
     .page-wrapper {
       display: flex;
       flex-wrap: wrap;
@@ -53,22 +53,21 @@
       margin: 0 auto;
     }
 
-    #rulesBox {
-      background-color: #1e1e1e;
+    .side-panel {
+      background-color: var(--card-bg);
       border: 1px solid #333;
       border-radius: 15px;
-      padding: 25px;
-      width: 350px;
+      padding: 20px;
+      width: 280px;
       text-align: left;
-      font-size: 0.95rem;
-      line-height: 1.5;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
 
-    #rulesBox h3 { color: #007bff; margin-top: 0; }
-    #rulesBox p { color: #ccc; }
+    .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+    .dot { height: 8px; width: 8px; background-color: var(--primary); border-radius: 50%; }
 
-    .gameArea {
-      background-color: #1e1e1e;
+    .game-area {
+      background-color: var(--card-bg);
       border: 1px solid #333;
       border-radius: 15px;
       padding: 30px;
@@ -76,18 +75,18 @@
       flex-direction: column;
       align-items: center;
       position: relative;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
 
+    /* Board and Grid */
     .board {
       display: grid;
       grid-template-columns: repeat(4, 80px);
       grid-template-rows: repeat(4, 80px);
-      gap: 8px;
+      gap: 10px;
       margin: 20px 0;
       background: #333;
-      padding: 8px;
-      border-radius: 10px;
+      padding: 12px;
+      border-radius: 12px;
     }
 
     .cell {
@@ -101,27 +100,45 @@
       cursor: pointer;
       transition: all 0.2s ease;
       color: #fff;
+      user-select: none;
     }
 
-    .cell.selected { background: #007bff !important; }
-    .cell.valid { background: #1a4a2a; border: 2px solid #28a745; }
+    .cell:hover { background: #3a3a3a; }
+    .cell.selected { background: var(--primary) !important; transform: scale(1.05); }
+    .cell.valid { background: var(--valid-green); border: 2px solid var(--valid-border); }
 
-    #moveInfo {
-      background: #121212;
+    /* Move Info */
+    .move-info {
+      background: var(--bg);
       padding: 15px;
       border-radius: 10px;
       width: 100%;
       display: flex;
       justify-content: space-around;
       border: 1px solid #333;
+      margin-top: 10px;
     }
 
-    #moveInfo strong { color: #007bff; }
+    .move-info strong { color: var(--primary); }
+
+    /* Buttons and Overlays */
+    .btn {
+      width: 100%;
+      padding: 10px;
+      background: var(--primary);
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 15px;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.9; }
 
     #announcement {
       position: absolute;
-      top: 50%;
-      left: 50%;
+      top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       background: #dc3545;
       color: white;
@@ -132,6 +149,7 @@
       display: none;
       z-index: 10;
       box-shadow: 0 0 50px rgba(0,0,0,0.8);
+      white-space: nowrap;
     }
   </style>
 </head>
@@ -139,29 +157,34 @@
 
   <nav>
     <a href="index.html">Home</a>
-    <a href="rps.html">RPS</a>
-    <a href="knockout.html">Knockout</a>
-    <a href="knockout_bot.html">Knockout Bot</a>
+    <a href="knockout_bot.html" class="active">Knockout Bot</a>
+    <a href="boxing.html">Boxing Bot</a>
     <a href="five_hands.html">Five Hands</a>
     <a href="six_hands.html">Six Hands</a>
-    <a href="step_count.html">Step Count</a>
     <a href="spiral_puzzle.html">Color Spiral</a>
+    <a href="step_count.html">Step Count</a>
+    <a href="numberttt.html">Number TTT</a>
+    <a href="knockout.html">Knockout (PvP)</a>
   </nav>
 
   <h1>Knockout Bot</h1>
+  <p class="subtitle">Challenge the bot in a strategic game of sliding and pushing.</p>
 
   <div class="page-wrapper">
-    <div id="rulesBox">
-      <h3>VS The Machine</h3>
-      <p>The starting player is randomized. You are (O), Bot is (X).</p>
-      <p><strong>Normal Move:</strong> Slide any distance to an empty square.</p>
-      <p><strong>Push Move:</strong> Move 1 space into a piece. No pushing in the same direction as your previous move.</p>
+    <div class="side-panel">
+      <div class="section-header"><div class="dot"></div><h3>Rules</h3></div>
+      <p style="font-size: 0.85rem; color: var(--text-dim);">
+        <strong>Normal Move:</strong> Slide any distance to an empty square.<br><br>
+        <strong>Push Move:</strong> Move 1 space into a piece. No pushing in the same direction as your previous move.<br><br>
+        <strong>Goal:</strong> Push any one of the Bot's pieces off the board.
+      </p>
+      <button class="btn" onclick="resetGame()">Restart Game</button>
     </div>
       
-    <div class="gameArea">
+    <div class="game-area">
       <div id="announcement"></div>
       <div class="board" id="board"></div>
-      <div id="moveInfo">
+      <div class="move-info">
         <p><strong>Bot Last:</strong> <span id="xMove">None</span></p>
         <p><strong>You Last:</strong> <span id="oMove">None</span></p>
       </div>
@@ -173,13 +196,29 @@ let boardState = Array(16).fill(null);
 let selectedIndex = null;
 let lastMoveX = "None";
 let lastMoveO = "None";
+let xturn = false;
+let gameActive = true;
 
-// Initialize starting pieces
-boardState[0] = "X"; boardState[1] = "X"; boardState[2] = "X"; boardState[3] = "X";
-boardState[12] = "O"; boardState[13] = "O"; boardState[14] = "O"; boardState[15] = "O";
-
-// RANDOMIZE STARTING PLAYER
-let xturn = Math.random() < 0.5;
+function resetGame() {
+  boardState = Array(16).fill(null);
+  boardState[0] = "X"; boardState[1] = "X"; boardState[2] = "X"; boardState[3] = "X";
+  boardState[12] = "O"; boardState[13] = "O"; boardState[14] = "O"; boardState[15] = "O";
+  
+  selectedIndex = null;
+  lastMoveX = "None";
+  lastMoveO = "None";
+  gameActive = true;
+  
+  document.getElementById("xMove").textContent = "None";
+  document.getElementById("oMove").textContent = "None";
+  document.getElementById("announcement").style.display = "none";
+  
+  xturn = Math.random() < 0.5;
+  initBoard();
+  updateBoard();
+  
+  if (xturn) setTimeout(botMove, 1000);
+}
 
 const board = document.getElementById("board");
 
@@ -196,6 +235,8 @@ function initBoard() {
 }
 
 function handleClick(i) {
+  if (!gameActive) return;
+
   if (selectedIndex === i) {
     selectedIndex = null;
     updateBoard();
@@ -203,57 +244,7 @@ function handleClick(i) {
   }
 
   if (selectedIndex !== null && validMove(selectedIndex, i)) {
-    const dir = moveDirection(selectedIndex, i);
-    
-    if (xturn) {
-      lastMoveX = dir;
-      document.getElementById("xMove").textContent = lastMoveX;
-    } else {
-      lastMoveO = dir;
-      document.getElementById("oMove").textContent = lastMoveO;
-    }
-
-    if (boardState[i] !== null) {
-      let step, edges;
-      if (dir === "↑ Up") { step = -4; edges = [0,1,2,3]; }
-      else if (dir === "↓ Down") { step = 4; edges = [12,13,14,15]; }
-      else if (dir === "← Left") { step = -1; edges = [0,4,8,12]; }
-      else if (dir === "→ Right") { step = 1; edges = [3,7,11,15]; }
-
-      let pushedPiece = boardState[i];
-      let pushedIndex = i;
-
-      boardState[i] = boardState[selectedIndex];
-      boardState[selectedIndex] = null;
-      selectedIndex = null;
-      xturn = !xturn;
-
-      while (true) {
-        if (edges.includes(pushedIndex)) {
-          updateBoard();
-          announce(pushedPiece + " was pushed off! Game Over!");
-          return;
-        }
-        pushedIndex += step;
-        if (boardState[pushedIndex] === null) {
-          boardState[pushedIndex] = pushedPiece;
-          break;
-        } else {
-          let temp = boardState[pushedIndex];
-          boardState[pushedIndex] = pushedPiece;
-          pushedPiece = temp;
-        }
-      }
-      updateBoard();
-    } else {
-      boardState[i] = boardState[selectedIndex];
-      boardState[selectedIndex] = null;
-      selectedIndex = null;
-      xturn = !xturn;
-      updateBoard();
-    }
-
-    if (xturn) setTimeout(botMove, 800);
+    executeMove(selectedIndex, i);
     return;
   }
 
@@ -261,6 +252,60 @@ function handleClick(i) {
     selectedIndex = i;
     updateBoard();
   }
+}
+
+function executeMove(start, end) {
+  const dir = moveDirection(start, end);
+    
+  if (xturn) {
+    lastMoveX = dir;
+    document.getElementById("xMove").textContent = lastMoveX;
+  } else {
+    lastMoveO = dir;
+    document.getElementById("oMove").textContent = lastMoveO;
+  }
+
+  if (boardState[end] !== null) {
+    let step, edges;
+    if (dir === "↑ Up") { step = -4; edges = [0,1,2,3]; }
+    else if (dir === "↓ Down") { step = 4; edges = [12,13,14,15]; }
+    else if (dir === "← Left") { step = -1; edges = [0,4,8,12]; }
+    else if (dir === "→ Right") { step = 1; edges = [3,7,11,15]; }
+
+    let pushedPiece = boardState[end];
+    let pushedIndex = end;
+
+    boardState[end] = boardState[start];
+    boardState[start] = null;
+    selectedIndex = null;
+    xturn = !xturn;
+
+    while (true) {
+      if (edges.includes(pushedIndex)) {
+        updateBoard();
+        gameActive = false;
+        announce(pushedPiece === "X" ? "VICTORY! Bot defeated." : "DEFEAT! Bot wins.");
+        return;
+      }
+      pushedIndex += step;
+      if (boardState[pushedIndex] === null) {
+        boardState[pushedIndex] = pushedPiece;
+        break;
+      } else {
+        let temp = boardState[pushedIndex];
+        boardState[pushedIndex] = pushedPiece;
+        pushedPiece = temp;
+      }
+    }
+  } else {
+    boardState[end] = boardState[start];
+    boardState[start] = null;
+    selectedIndex = null;
+    xturn = !xturn;
+  }
+
+  updateBoard();
+  if (xturn && gameActive) setTimeout(botMove, 800);
 }
 
 function announce(message) {
@@ -300,6 +345,7 @@ function moveDirection(start, end) {
 }
 
 function botMove() {
+  if (!gameActive) return;
   let safeMoves = [];
   let winningMove = null;
 
@@ -321,8 +367,7 @@ function botMove() {
 
   let move = winningMove || safeMoves[Math.floor(Math.random() * safeMoves.length)];
   if (move) {
-    selectedIndex = move.start;
-    handleClick(move.end);
+    executeMove(move.start, move.end);
   }
 }
 
@@ -369,12 +414,7 @@ function updateBoard() {
   });
 }
 
-initBoard();
-updateBoard();
-
-// IF BOT (X) STARTS, WAIT AND MOVE
-if (xturn) setTimeout(botMove, 1000);
-
+resetGame();
 </script>
 
 </body>

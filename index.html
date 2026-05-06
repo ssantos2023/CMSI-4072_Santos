@@ -3,37 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sammy's Games</title>
+  <title>Sammy's Games | Home</title>
   <style>
-    /* Global Styles */
+    :root {
+      --primary: #007bff;
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --text: #ffffff;
+      --text-dim: #aaa;
+      --nav-bg: #1e1e1e;
+    }
+
     body { 
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-      background-color: #121212; 
-      color: white; 
-      text-align: center; 
+      background-color: var(--bg); 
+      color: var(--text); 
       margin: 0;
       padding: 0;
+      line-height: 1.6;
     }
 
-    h1 {
-      margin-top: 50px;
-      font-size: 3rem;
-      color: #007bff;
-    }
-
-    p.subtitle {
-      color: #aaa;
-      margin-bottom: 40px;
-    }
-    /* Navigation Bar */
+    /* Navigation Bar - Matches Game Files */
     nav {
-      background-color: #1e1e1e;
+      background-color: var(--nav-bg);
       padding: 15px;
       border-bottom: 1px solid #333;
       display: flex;
       justify-content: center;
       gap: 15px;
       flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
 
     nav a {
@@ -44,137 +45,209 @@
     }
 
     nav a:hover {
-      color: #007bff;
+      color: var(--primary);
     }
 
-    /* Game Grid Layout */
+    nav a.active {
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    header {
+      padding: 60px 20px;
+      text-align: center;
+      background: linear-gradient(to bottom, #1a1a1a, var(--bg));
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 3.5rem;
+      color: var(--primary);
+      letter-spacing: -1px;
+    }
+
+    .subtitle {
+      color: var(--text-dim);
+      font-size: 1.2rem;
+      margin-top: 10px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+
+    .section-header {
+      margin: 40px 0 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-header h2 {
+      font-size: 1.5rem;
+      margin: 0;
+      font-weight: 500;
+    }
+
+    .dot {
+      height: 8px;
+      width: 8px;
+      background-color: var(--primary);
+      border-radius: 50%;
+    }
+
     .game-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 25px;
-      padding: 20px;
-      max-width: 1200px;
-      margin: 0 auto;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
     }
 
-    /* Individual Card Styling */
     .game-card {
-      background-color: #1e1e1e;
-      border-radius: 15px;
-      padding: 25px;
+      background-color: var(--card-bg);
       text-decoration: none;
-      color: white;
-      transition: all 0.3s ease;
+      color: inherit;
+      border-radius: 12px;
       border: 1px solid #333;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
+      padding: 20px;
+      transition: all 0.2s ease;
     }
 
-    /* Icon/Image Placeholder */
-    .card-image {
-      font-size: 50px;
-      margin-bottom: 15px;
-      background: #2a2a2a;
-      width: 100%;
-      height: 140px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 10px;
-      transition: background 0.3s;
-    }
-
-    /* Hover Effects */
     .game-card:hover {
-      transform: translateY(-10px);
-      border-color: #007bff;
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+      transform: translateY(-4px);
+      border-color: var(--primary);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
       background-color: #252525;
     }
 
-    .game-card:hover .card-image {
-      background: #333;
+    .icon {
+      font-size: 2.5rem;
+      margin-right: 20px;
+      min-width: 50px;
+      text-align: center;
     }
 
-    .game-card h3 {
-      margin: 15px 0 10px 0;
-      font-size: 1.5rem;
-    }
+    .info h3 { margin: 0; font-size: 1.2rem; }
+    .info p { margin: 5px 0 0; font-size: 0.85rem; color: var(--text-dim); }
 
-    .game-card p {
-      font-size: 0.95rem;
-      color: #aaa;
-      margin: 0;
+    footer {
+      text-align: center;
+      padding: 40px;
+      color: #555;
+      font-size: 0.85rem;
+      border-top: 1px solid #222;
     }
   </style>
 </head>
 <body>
+
   <nav>
-    <a href="index.html">Home</a>
-    <a href="rps.html">RPS</a>
-    <a href="knockout.html">Knockout</a>
+    <a href="index.html" class="active">Home</a>
     <a href="knockout_bot.html">Knockout Bot</a>
+    <a href="boxing.html">Boxing Bot</a>
     <a href="five_hands.html">Five Hands</a>
     <a href="six_hands.html">Six Hands</a>
-    <a href="step_count.html">Step Count</a>
     <a href="spiral_puzzle.html">Color Spiral</a>
+    <a href="step_count.html">Step Count</a>
+    <a href="numberttt.html">Number TTT</a>
+    <a href="knockout.html">Knockout (PvP)</a>
   </nav>
-  <h1>Sammy's Games</h1>
-  <p class="subtitle">Welcome to Sammy's Games.</p>
 
-  <div class="game-grid">
+  <header>
+    <h1>Sammy's Games</h1>
+    <p class="subtitle">Sammy's Original Games Platform</p>
+  </header>
+
+  <div class="container">
     
-    <a href="rps.html" class="game-card">
-      <div class="card-image">🪨</div>
-      <h3>RPS</h3>
-      <p>Rock, Paper, Scissors.</p>
-      <p>Player vs Computer</p>
-    </a>
+    <div class="section-header">
+      <div class="dot"></div>
+      <h2>Daily Games</h2>
+    </div>
+    <div class="game-grid">
+      <a href="spiral_puzzle.html" class="game-card">
+        <div class="icon">🌀</div>
+        <div class="info">
+          <h3>Color Spiral</h3>
+          <p>Spin colors into order on the daily grid.</p>
+        </div>
+      </a>
+      <a href="five_hands.html" class="game-card">
+        <div class="icon">🖐️</div>
+        <div class="info">
+          <h3>Five Hands</h3>
+          <p>Poker hands optimization puzzle.</p>
+        </div>
+      </a>
+      <a href="six_hands.html" class="game-card">
+        <div class="icon">🙌</div>
+        <div class="info">
+          <h3>Six Hands</h3>
+          <p>Five hands but bigger.</p>
+        </div>
+      </a>
+    </div>
 
-    <a href="knockout.html" class="game-card">
-      <div class="card-image">🥊</div>
-      <h3>Knockout</h3>
-      <p>Battle a friend on the knockout board.</p>
-      <p>Player vs Player</p>
-    </a>
+    <div class="section-header">
+      <div class="dot"></div>
+      <h2>Player vs Bot</h2>
+    </div>
+    <div class="game-grid">
+      <a href="knockout_bot.html" class="game-card">
+        <div class="icon">🤖</div>
+        <div class="info">
+          <h3>Knockout Bot</h3>
+          <p>Challenge the bot in a strategic game of sliding and pushing.</p>
+        </div>
+      </a>
+      <a href="boxing.html" class="game-card">
+        <div class="icon">🥊</div>
+        <div class="info">
+          <h3>Boxing Bot</h3>
+          <p>Simultaneous-move combat vs a strong bot.</p>
+        </div>
+      </a>
+    </div>
 
-    <a href="knockout_bot.html" class="game-card">
-      <div class="card-image">🤖</div>
-      <h3>Knockout Bot</h3>
-      <p>Can you beat the bot?</p>
-      <p>Player vs Computer</p>
-    </a>
-
-    <a href="five_hands.html" class="game-card">
-      <div class="card-image">🖐️</div>
-      <h3>Five Hands</h3>
-      <p>Optimization card game.</p>
-      <p>Daily Puzzle</p>
-    </a>
-
-    <a href="six_hands.html" class="game-card">
-      <div class="card-image">🙌</div>
-      <h3>Six Hands</h3>
-      <p>The challenge gets bigger.</p>
-      <p>Daily Puzzle</p>
-    </a>
-
-    <a href="step_count.html" class="game-card">
-      <div class="card-image">👟</div>
-      <h3>Step Count</h3>
-      <p>Don't get trapped in this 1v1 board game.</p>
-      <p>Player vs Player</p>
-    </a>
-
-    <a href="spiral_puzzle.html" class="game-card">
-      <div class="card-image">🌀</div>
-      <h3>Color Spiral</h3>
-      <p>Find the highest score in this daily game.</p>
-      <p>Daily Puzzle</p>
-    </a>
+    <div class="section-header">
+      <div class="dot"></div>
+      <h2>Player vs Player</h2>
+    </div>
+    <div class="game-grid">
+      <a href="knockout.html" class="game-card">
+        <div class="icon">👥</div>
+        <div class="info">
+          <h3>Knockout</h3>
+          <p>Knock your friend's piece off the board first.</p>
+        </div>
+      </a>
+      <a href="step_count.html" class="game-card">
+        <div class="icon">👟</div>
+        <div class="info">
+          <h3>Step Count</h3>
+          <p>A 1v1 of strategic grid movement and pathing.</p>
+        </div>
+      </a>
+      <a href="numberttt.html" class="game-card">
+        <div class="icon">🔢</div>
+        <div class="info">
+          <h3>Number Tic-Tac-Toe</h3>
+          <p>A spin on Tic-Tac-Toe.</p>
+        </div>
+      </a>
+    </div>
 
   </div>
+
+  <footer>
+    &copy; 2026 Sammy Santos | Designed for CMSI 4072
+  </footer>
 
 </body>
 </html>
